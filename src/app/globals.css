@@ -16,12 +16,21 @@
   }
 }
 
+@font-face {
+  font-family: 'Stolzl Book';
+  src: url('/fonts/Stolzl Book.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply bg-white;
+  @apply font-stolzl;
+}
+
+.text-gradient {
+  background: linear-gradient(90deg,#32255e,#68368b 32.52%,#194fa1 67.07%,#1a99b0 99.87%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
