@@ -15,7 +15,7 @@ export function Groups() {
                         {key: "description", name: "Description"},
                     ]}
                     title={"Groups"}
-                    perPage={10}
+                    perPage={9}
                 />
                 : null}
         </div>

@@ -25,7 +25,7 @@ const Table: React.FC<TableProps> = ({data, columns, title, perPage}) => {
     };
 
     return (
-        <Card className="h-full w-full overflow-scroll">
+        <Card className="h-full w-full overflow-auto">
             <CardBody>
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>

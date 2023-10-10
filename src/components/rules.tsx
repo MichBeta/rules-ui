@@ -22,7 +22,7 @@ export function Rules() {
                         {key: "ruleCode", name: "Rule Code"},
                     ]}
                     title={"Rules"}
-                    perPage={10}
+                    perPage={9}
                 />
                 : null}
         </div>
