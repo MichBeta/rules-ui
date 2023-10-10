@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import Pagination from "@/components/pagination";
 import {Card, CardBody, CardFooter, Typography} from "@material-tailwind/react";
+import {AiOutlineEdit, AiOutlineDelete} from "react-icons/ai";
+import {BiArchiveIn} from "react-icons/bi";
 
 interface TableProps {
     data: any[];
@@ -63,10 +65,26 @@ const Table: React.FC<TableProps> = ({data, columns, title, perPage}) => {
                                 </td>
                             ))}
                             <td className="p-4">
-                                <Typography as="a" href="#" variant="small" color="blue-gray"
-                                            className="font-medium">
-                                    Edit
-                                </Typography>
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
+                                        aria-label="Edit"
+                                    >
+                                        <AiOutlineEdit/>
+                                    </button>
+                                    <button
+                                        className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
+                                        aria-label="Delete"
+                                    >
+                                        <AiOutlineDelete/>
+                                    </button>
+                                    <button
+                                        className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
+                                        aria-label="Archive"
+                                    >
+                                        <BiArchiveIn/>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}
