@@ -1,7 +1,7 @@
 function HomePage() {
   return (
       <div className="flex h-screen">
-          Home Page
+          Worklist
       </div>
   )
 }

@@ -108,13 +108,6 @@ export const ruleApi = createApi({
         getRuleByRuleCode: builder.query<Rule, string>({
             query: (ruleCode) => `/rules/ruleByRuleCode/${ruleCode}`,
         }),
-        editRule: builder.mutation({
-            query: (rule) => ({
-                url: `/rules/${rule.EntityId}`,
-                method: 'PUT',
-                body: rule
-            }),
-        }),
         createRule: builder.mutation({
             query: (rule) => ({
                 url: `/rules`,
@@ -131,4 +124,4 @@ export const ruleApi = createApi({
     })
 })
 
-export const {useGetRulesQuery, useGetRuleByIdQuery, useGetRuleByRuleCodeQuery, useEditRuleMutation, useCreateRuleMutation, useDeleteRuleMutation} = ruleApi;
+export const {useGetRulesQuery, useGetRuleByIdQuery, useGetRuleByRuleCodeQuery, useCreateRuleMutation, useDeleteRuleMutation} = ruleApi;

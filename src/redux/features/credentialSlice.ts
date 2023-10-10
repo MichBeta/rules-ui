@@ -1,4 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
+import {cookies} from "next/headers";
 
 const initialState = {
     username: '',
