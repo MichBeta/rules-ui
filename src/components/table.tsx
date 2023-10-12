@@ -9,9 +9,10 @@ interface TableProps {
     columns: any[];
     title: string;
     perPage: number;
+    actions?: boolean;
 }
 
-const Table: React.FC<TableProps> = ({data, columns, title, perPage}) => {
+const Table: React.FC<TableProps> = ({data, columns, title, perPage,actions}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [currentData, setCurrentData] = useState(data.slice(0, perPage));
 
@@ -44,6 +45,7 @@ const Table: React.FC<TableProps> = ({data, columns, title, perPage}) => {
                                 </Typography>
                             </th>
                         ))}
+                        {actions ?
                         <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
                             <Typography
                                 variant="small"
@@ -53,6 +55,7 @@ const Table: React.FC<TableProps> = ({data, columns, title, perPage}) => {
                                 Actions
                             </Typography>
                         </th>
+                        : null}
                     </tr>
                     </thead>
                     <tbody>
@@ -64,6 +67,7 @@ const Table: React.FC<TableProps> = ({data, columns, title, perPage}) => {
                                                 className="font-normal">{row[col.key]}</Typography>
                                 </td>
                             ))}
+                            {actions ?
                             <td className="p-4">
                                 <div className="flex items-center gap-3">
                                     <Tooltip
@@ -119,6 +123,7 @@ const Table: React.FC<TableProps> = ({data, columns, title, perPage}) => {
                                     </Tooltip>
                                 </div>
                             </td>
+                            : null}
                         </tr>
                     ))}
                     </tbody>

@@ -2,14 +2,26 @@
 import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {decrement, increment} from "@/redux/features/counterSlice";
 import {setRuleCode, clearRuleCode} from "@/redux/features/ruleCodeSlice";
-import {setGroupCode, clearGroupCode} from "@/redux/features/groupCodeSlice";
-import {Rule} from "@/components/rule";
-import {Group} from "@/components/group";
+import {Rule} from "@/components/test/rule";
+import {Predicate} from "@/components/test/predicate";
+import {ClaimFields} from "@/components/test/claimField";
+import {Enumerations} from "@/components/test/enumeration";
+import {Group} from "@/components/test/group";
+import TabsComponent from "@/components/tabs";
+import React from "react";
+
+const data = [
+    { id: 1, label: "Predicate", value:"predicate", content: <Predicate /> },
+    { id: 2, label: "Claim Fields", value:"claimFields", content: <ClaimFields /> },
+    { id: 3, label: "Enumerations", value:"enumerations", content: <Enumerations /> },
+]
 
 function TestPage() {
     const count = useAppSelector(state => state.counterReducer.counter)
     const dispatch = useAppDispatch()
-
+    return (
+        <TabsComponent data={data}/>
+    )
     return (
         <div className={"flex flex-col items-center justify-center h-screen"}>
             <h1 className={"text-4xl"}>Redux Examples</h1>

@@ -16,6 +16,7 @@ export function Groups() {
                     ]}
                     title={"Groups"}
                     perPage={9}
+                    actions={true}
                 />
                 : null}
         </div>

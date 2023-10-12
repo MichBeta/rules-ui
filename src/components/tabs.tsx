@@ -9,23 +9,11 @@ import {
     Tab,
     TabPanel,
 } from "@material-tailwind/react";
+import {TabModel} from "@/models/tab";
 
-type Tab = {
-    id: number;
-    label: string;
-    value: string;
-    content: React.ReactNode;
-};
 
-const data: Tab[] = [
-    { id: 1, label: "Rules", value:"rules", content: <Rules /> },
-    { id: 2, label: "Groups", value:"groups", content: <Groups /> },
-    { id: 3, label: "Organizations", value:"organizations", content: "Tab 3 content" },
-    { id: 4, label: "Imports", value:"imports", content: "Tab 3 content" },
-];
-
-export default function TabsComponent() {
-    const [activeTab, setActiveTab] = useState<Tab>(data[0]);
+export default function TabsComponent({data}: {data: TabModel[]}) {
+    const [activeTab, setActiveTab] = useState<TabModel>(data[0]);
 
     return (
         <Tabs id={"custom-animation"} value={activeTab.value} onChange={setActiveTab}>

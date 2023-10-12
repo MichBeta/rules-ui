@@ -13,7 +13,6 @@ export async function middleware(request: NextRequest) {
     try {
         //decode jwt token and get the payload
         const payload = jose.decodeJwt(jwt);
-        console.log(payload.sub);
         const roles = credentials.split('|')[0];
         const username = credentials.split('|')[1];
         if (roles.includes('Administrator') && payload.sub === username) {

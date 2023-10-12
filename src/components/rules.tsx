@@ -23,6 +23,7 @@ export function Rules() {
                     ]}
                     title={"Rules"}
                     perPage={9}
+                    actions={true}
                 />
                 : null}
         </div>
