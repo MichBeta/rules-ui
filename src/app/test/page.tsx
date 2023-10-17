@@ -6,6 +6,7 @@ import {Rule} from "@/components/test/rule";
 import {Predicate} from "@/components/test/predicate";
 import {ClaimFields} from "@/components/test/claimField";
 import {Enumerations} from "@/components/test/enumeration";
+import {Validator} from "@/components/test/validator";
 import {Group} from "@/components/test/group";
 import TabsComponent from "@/components/tabs";
 import React from "react";
@@ -14,6 +15,7 @@ const data = [
     { id: 1, label: "Predicate", value:"predicate", content: <Predicate /> },
     { id: 2, label: "Claim Fields", value:"claimFields", content: <ClaimFields /> },
     { id: 3, label: "Enumerations", value:"enumerations", content: <Enumerations /> },
+    { id: 3, label: "Validator", value:"validator", content: <Validator/> },
 ]
 
 function TestPage() {

@@ -1,12 +1,5 @@
 import {createApi,fetchBaseQuery} from "@reduxjs/toolkit/query/react";
-
-interface ClaimField{
-    name: string;
-    category: string;
-    type: string;
-    xpath: string;
-    canCalculateVariance: boolean;
-}
+import {ClaimField} from "@/models/claimField";
 
 export const claimFieldApi = createApi({
     reducerPath: 'claimFieldApi',
