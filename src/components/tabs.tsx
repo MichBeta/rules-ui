@@ -19,7 +19,7 @@ export default function TabsComponent({data}: {data: TabModel[]}) {
         <Tabs id={"custom-animation"} value={activeTab.value} onChange={setActiveTab}>
             <TabsHeader>
                 {data.map((tab) => (
-                    <Tab key={tab.id} value={tab.value}>
+                    <Tab key={`${tab.value}-${tab.id}`} value={tab.value}>
                         {tab.label}
                     </Tab>
                 ))}
@@ -32,7 +32,7 @@ export default function TabsComponent({data}: {data: TabModel[]}) {
                 }}
                 >
                 {data.map((tab) => (
-                    <TabPanel key={tab.id} value={tab.value}>
+                    <TabPanel key={`${tab.value}-${tab.id}`} value={tab.value}>
                         {tab.content}
                     </TabPanel>
                 ))}
