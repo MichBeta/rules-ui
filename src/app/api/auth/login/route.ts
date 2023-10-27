@@ -24,8 +24,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
         roleResponse.data.userRoles.forEach((role:Role) => {
             roles.push(role.role_type);
         });
+        const lobId = roleResponse.data.lob_id;
         if(roles.includes('Administrator')){
-            cookies().set('credentials', roles+"|"+username);
+            cookies().set('credentials', roles+"|"+username+"|"+lobId);
             const url = "https://dispatch-login-dev.tkg-rms-dev.usdc01.solera.farm/connect/token";
             const response = await axios.post(url, new URLSearchParams({
                 username,

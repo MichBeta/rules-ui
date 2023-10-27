@@ -53,7 +53,7 @@ interface GroupAssignment {
     ruleIds: string[];
 }
 
-interface Rule {
+export interface Rule {
     entityId: string;
     code: number;
     ruleCode: string;
@@ -102,6 +102,9 @@ export const ruleApi = createApi({
         getRules: builder.query<Rule[], null>({
             query: () => `/rules`,
         }),
+        getRulesByOwner: builder.query<Rule[], string>({
+            query: (owner) => `/rules/rulesByOwner/${owner}`,
+        }),
         getRuleById: builder.query({
             query: (id) => `/rules/${id}`,
         }),
@@ -124,4 +127,4 @@ export const ruleApi = createApi({
     })
 })
 
-export const {useGetRulesQuery, useGetRuleByIdQuery, useGetRuleByRuleCodeQuery, useCreateRuleMutation, useDeleteRuleMutation} = ruleApi;
+export const {useGetRulesQuery, useGetRulesByOwnerQuery, useGetRuleByIdQuery, useGetRuleByRuleCodeQuery, useCreateRuleMutation, useDeleteRuleMutation} = ruleApi;

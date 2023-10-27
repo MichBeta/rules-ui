@@ -63,7 +63,10 @@ export function ClaimFields() {
                         </select>
                     )}
                     {selectedField && selectedCompareOperators && (
-                        <select className={"border-2 border-gray-300 rounded-md p-2"} onChange={handlePredicateChange}>
+                        <select
+                            className={"border-2 border-gray-300 rounded-md p-2"}
+                            onChange={handlePredicateChange}
+                        >
                             <option value={""}>Select Operator</option>
                             {selectedCompareOperators.map((item, index) => (
                                 <option key={index} value={item.code}>{item.name}</option>

@@ -1,7 +1,7 @@
 import {
     Card,
     Input,
-    Button,
+    Chip,
     Typography,
 } from "@material-tailwind/react";
 import {useState} from "react";
@@ -13,16 +13,12 @@ export function Validator() {
     const [text, setText] = useState("");
     const [match, setMatch] = useState("");
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setText(e.target.value);
-    }
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const isValid = validateExpression(text, data as ClaimField[]);
+        const isValid = validateExpression(e.target.value, data as ClaimField[]);
         if(isValid) {
-            setMatch(`Expression "${text}" is ${isValid ? 'valid' : 'invalid'}`);
+            setMatch(`Expression "${e.target.value}" is ${isValid ? 'valid' : 'invalid'}`);
         }
         else {
-            setMatch(`Expression "${text}" is ${isValid ? 'valid' : 'invalid'}`);
+            setMatch(`Expression "${e.target.value}" is ${isValid ? 'valid' : 'invalid'}`);
         }
     }
     return (
@@ -33,16 +29,11 @@ export function Validator() {
             <Typography color="gray" className="mt-1 font-normal">
                 Enter the text to test
             </Typography>
-            <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96" onSubmit={handleSubmit}>
-                <div className="mb-4 flex flex-col gap-6">
-                    <Input size="lg" label="Test text" crossOrigin={undefined} type="text" value={text} onChange={handleChange} />
-                </div>
-                <Button className="mt-6" fullWidth type={"submit"}>
-                    Test
-                </Button>
-            </form>
+            <div className="mb-4 flex flex-col gap-6">
+                <Input size="lg" label="Test text" crossOrigin={undefined} type="text" onChange={handleChange} />
+            </div>
             {match ? <Typography color="gray" className="mt-1 font-normal">
-                Match: {match}
+                {match}
             </Typography> : null}
         </Card>
     )

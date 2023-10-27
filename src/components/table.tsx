@@ -1,18 +1,21 @@
 import React, {useState} from 'react';
 import Pagination from "@/components/pagination";
-import {Card, CardBody, CardFooter, Tooltip, Typography} from "@material-tailwind/react";
+import {Card, CardBody, CardHeader, CardFooter, Tooltip, Typography, Input} from "@material-tailwind/react";
 import {AiOutlineEdit, AiOutlineDelete} from "react-icons/ai";
 import {BiArchiveIn} from "react-icons/bi";
+import {FaMagnifyingGlass} from "react-icons/fa6";
 
 interface TableProps {
     data: any[];
+    searchable?: boolean;
     columns: any[];
+    customColumns?: any[];
     title: string;
     perPage: number;
     actions?: boolean;
 }
 
-const Table: React.FC<TableProps> = ({data, columns, title, perPage,actions}) => {
+const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns , title, perPage,actions}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [currentData, setCurrentData] = useState(data.slice(0, perPage));
 
@@ -25,12 +28,53 @@ const Table: React.FC<TableProps> = ({data, columns, title, perPage,actions}) =>
         setCurrentData(data.slice(start, end));
     };
 
+    const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.toLowerCase();
+        const filteredData = data.filter((row) => {
+            return Object.keys(row).some((key) => {
+                const cellValue = row[key];
+                console.log(key, cellValue);
+                return cellValue !== null && cellValue.toString().toLowerCase().includes(value);
+            });
+        });
+        setCurrentData(filteredData.slice(0, perPage));
+        setCurrentPage(1);
+    }
+
     return (
         <Card className="h-full w-full overflow-auto">
             <CardBody>
+                {searchable ?
+                    <CardHeader floated={false} shadow={false} className="rounded-none">
+                        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+                            <div className="w-full md:w-72 py-2">
+                                <Input
+                                    label="Search"
+                                    crossOrigin={undefined}
+                                    icon={<FaMagnifyingGlass/>}
+                                    onChange={onSearch}
+                                />
+                            </div>
+                        </div>
+                    </CardHeader>
+                    : null}
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                     <tr>
+                        {customColumns ? customColumns.map((head) => (
+                            <th
+                                key={head.key}
+                                className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                            >
+                                <Typography
+                                    variant="small"
+                                    color="blue-gray"
+                                    className="font-normal leading-none opacity-70"
+                                >
+                                    {head.name}
+                                </Typography>
+                            </th>
+                        )) : null}
                         {columns.map((head) => (
                             <th
                                 key={head.key}
@@ -61,6 +105,11 @@ const Table: React.FC<TableProps> = ({data, columns, title, perPage,actions}) =>
                     <tbody>
                     {currentData.map((row) => (
                         <tr key={row.id} className="even:bg-blue-gray-50/50">
+                            {customColumns ? customColumns.map((col) => (
+                                <td key={col.key} className="p-4">
+                                    {col.render(row)}
+                                </td>
+                            )) : null}
                             {columns.map((col) => (
                                 <td key={col.key} className="p-4">
                                     <Typography variant="small" color="blue-gray"

@@ -10,6 +10,8 @@ import {groupApi} from "@/redux/services/groupApi";
 import {predicateApi} from "@/redux/services/predicateApi";
 import {claimFieldApi} from "@/redux/services/claimFieldApi";
 import {enumerationApi} from "@/redux/services/enumerationApi";
+import {partApi} from "@/redux/services/partApi";
+import {sectionApi} from "@/redux/services/sectionApi";
 import {setupListeners} from "@reduxjs/toolkit/dist/query";
 
 export const store = configureStore({
@@ -25,6 +27,8 @@ export const store = configureStore({
         [predicateApi.reducerPath]: predicateApi.reducer,
         [claimFieldApi.reducerPath]: claimFieldApi.reducer,
         [enumerationApi.reducerPath]: enumerationApi.reducer,
+        [partApi.reducerPath]: partApi.reducer,
+        [sectionApi.reducerPath]: sectionApi.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
         .concat(userApi.middleware)
@@ -33,6 +37,8 @@ export const store = configureStore({
         .concat(predicateApi.middleware)
         .concat(claimFieldApi.middleware)
         .concat(enumerationApi.middleware)
+        .concat(partApi.middleware)
+        .concat(sectionApi.middleware)
 });
 
 setupListeners(store.dispatch);

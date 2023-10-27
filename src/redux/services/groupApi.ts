@@ -57,7 +57,7 @@ export const groupApi = createApi({
         getGroupById: builder.query<Group, string>({
             query: (id) => `/groups/${id}`,
         }),
-        getGroupByOrganizationId: builder.query<Group[], string>({
+        getGroupsByOrganizationId: builder.query<Group[], string>({
             query: (id) => `/groups/org/${id}`,
         }),
         createGroup: builder.mutation<Group, Group>({
@@ -79,7 +79,7 @@ export const groupApi = createApi({
 export const {
     useGetGroupsQuery,
     useGetGroupByIdQuery,
-    useGetGroupByOrganizationIdQuery,
+    useGetGroupsByOrganizationIdQuery,
     useCreateGroupMutation,
     useDeleteGroupMutation,
 } = groupApi;
