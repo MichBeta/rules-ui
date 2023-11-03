@@ -33,7 +33,6 @@ const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns 
         const filteredData = data.filter((row) => {
             return Object.keys(row).some((key) => {
                 const cellValue = row[key];
-                console.log(key, cellValue);
                 return cellValue !== null && cellValue.toString().toLowerCase().includes(value);
             });
         });

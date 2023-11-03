@@ -34,7 +34,7 @@ export function ClaimFields() {
 
     if (isLoading) return <div>Loading...</div>
     if (error) return <div>No claim fields found</div>
-
+    console.log(data)
     const selectedCategoryFields = metadata.find(item => item.name === selectedCategory)?.fields;
     const parser = new DOMParser();
     const selectedCompareOperators = selectedCategoryFields?.find(item => item.name === selectedField)?.compareOperators.map(item => {
@@ -44,6 +44,7 @@ export function ClaimFields() {
     })
     const metadataType = selectedCategoryFields?.find(item => item.name === selectedField)?.type;
     const claimFieldType = data?.filter(item => item.name === selectedField)[0]?.type;
+    const claimFieldxPath = data?.filter(item => item.name === selectedField)[0]?.xpath;
     return (
         <div className={"overflow-auto"}>
             {data ?
@@ -92,6 +93,18 @@ export function ClaimFields() {
                             label={"ClaimField Type(Qapter Compliance)"}
                             type={"text"}
                             value={claimFieldType}
+                            onChange={() => {}}
+                            crossOrigin={undefined}
+                            readOnly={true}
+                        />
+                    )}
+                    {selectedField && selectedCompareOperators && claimFieldxPath && (
+                        <Input
+                            className="border-2 border-gray-300 rounded-md p-2"
+                            size="lg"
+                            label={"ClaimField XPath(Qapter Compliance)"}
+                            type={"text"}
+                            value={claimFieldxPath}
                             onChange={() => {}}
                             crossOrigin={undefined}
                             readOnly={true}

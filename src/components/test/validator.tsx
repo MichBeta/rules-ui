@@ -55,7 +55,7 @@ function validateExpression(expression: string, data: ClaimField[]): boolean {
         const names = data.map((item) => item.name);
         // check if all the names from the expression are in the names array
         const isValid = matchesWithoutPrefix.every((item) => names.includes(item));
-        console.log("isValid", isValid);
+
         if(!isValid) {
             return false;
         }

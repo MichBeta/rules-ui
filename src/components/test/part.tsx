@@ -18,7 +18,6 @@ export function Parts() {
     const [selectedParts, setSelectedParts] = useState<string[]>([]);
     useEffect(() => {
             if(selectedParts.length > 0){
-                console.log(selectedParts)
             } else {
                 // Disable Stepper so user can't go to next step or previous step
             }
@@ -63,7 +62,6 @@ export function Parts() {
         <div className="w-full px-24 py-4">
             <Stepper
                 activeStep={activeStep}
-                onMouseEnter={() => console.log(selectedParts.length)}
             >
                 <Step onClick={() => setActiveStep(selectedParts.length > 0?activeStep:0)}>
                     <GiSteeringWheel className="h-5 w-5" />
