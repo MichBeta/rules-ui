@@ -4,8 +4,10 @@ import ruleCodeReducer from './features/ruleCodeSlice';
 import groupCodeReducer from './features/groupCodeSlice';
 import credentialReducer from './features/credentialSlice';
 import sidebarReducer from './features/sidebarSlice';
+import treeReducer from './features/treeSlice';
 import {userApi} from "@/redux/services/userApi";
 import {ruleApi} from "@/redux/services/ruleApi";
+import {organizationApi} from "@/redux/services/organizationApi";
 import {groupApi} from "@/redux/services/groupApi";
 import {predicateApi} from "@/redux/services/predicateApi";
 import {claimFieldApi} from "@/redux/services/claimFieldApi";
@@ -21,8 +23,10 @@ export const store = configureStore({
         groupCodeReducer: groupCodeReducer,
         credentialReducer: credentialReducer,
         sidebarReducer: sidebarReducer,
+        treeReducer: treeReducer,
         [userApi.reducerPath]: userApi.reducer,
         [ruleApi.reducerPath]: ruleApi.reducer,
+        [organizationApi.reducerPath]: organizationApi.reducer,
         [groupApi.reducerPath]: groupApi.reducer,
         [predicateApi.reducerPath]: predicateApi.reducer,
         [claimFieldApi.reducerPath]: claimFieldApi.reducer,
@@ -33,6 +37,7 @@ export const store = configureStore({
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
         .concat(userApi.middleware)
         .concat(ruleApi.middleware)
+        .concat(organizationApi.middleware)
         .concat(groupApi.middleware)
         .concat(predicateApi.middleware)
         .concat(claimFieldApi.middleware)

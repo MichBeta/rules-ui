@@ -1,5 +1,6 @@
 import {useGetGroupsByOrganizationIdQuery} from "@/redux/services/groupApi";
 import {useGetRulesByOwnerQuery} from "@/redux/services/ruleApi";
+import {useGetOrganizationsByIdQuery} from "@/redux/services/organizationApi";
 import Table from "@/components/table";
 import {
     Button,
@@ -15,19 +16,29 @@ import {
 import TabsComponent from "@/components/tabs";
 import {useState} from "react";
 import {Rule} from "@/redux/services/ruleApi";
+import {Organization} from "@/redux/services/organizationApi";
 import Cookies from "js-cookie";
 
 export function Groups() {
     const owner = Cookies.get("credentials")?.split("|")[2] || "";
     const {data, error, isLoading, isFetching} = useGetGroupsByOrganizationIdQuery(owner)
     const rules = useGetRulesByOwnerQuery(owner)
+    const organizations = useGetOrganizationsByIdQuery(owner)
     const [open, setOpen] = useState(false);
     const [selectedRules, setSelectedRules] = useState<Record<string, boolean>>({});
+    const [selectedOrganization, setSelectedOrganization] = useState<Record<string, boolean>>({});
 
-    const handleCheckboxChange = (ruleId: string, checked: boolean) => {
+    const handleRulesCheckboxChange = (ruleId: string, checked: boolean) => {
         setSelectedRules(prevState => ({
             ...prevState,
             [ruleId]: checked
+        }));
+    }
+
+    const handleOrgsCheckboxChange = (orgId: string, checked: boolean) => {
+        setSelectedOrganization(prevState => ({
+            ...prevState,
+            [orgId]: checked
         }));
     }
     const handleOpen = () => {
@@ -79,7 +90,7 @@ export function Groups() {
                                                     {key: "selected", name: "Selected", render: (row: Rule) => (
                                                             <Checkbox
                                                                 checked={selectedRules[row.ruleCode] || false}
-                                                                onChange={(e) => handleCheckboxChange(row.ruleCode, e.target.checked)}
+                                                                onChange={(e) => handleRulesCheckboxChange(row.ruleCode, e.target.checked)}
                                                                 crossOrigin={undefined}
                                                                 className="h-5 w-5 rounded-full border-gray-900/20 bg-gray-900/10 transition-all hover:scale-105 hover:before:opacity-0"
                                                             />
@@ -93,7 +104,30 @@ export function Groups() {
                                                 perPage={5}
                                             />
                                         </> },
-                                    { id: 3, label: "Summary", value:"Precondition", content: <></> },
+                                    { id: 3, label: "Organizations", value:"organizations", content:
+                                            <>
+                                            <Table
+                                                data={organizations.data as Organization[]}
+                                                searchable={true}
+                                                customColumns={[
+                                                    {key: "selected", name: "Selected", render: (row: Organization) => (
+                                                            <Checkbox
+                                                                checked={selectedOrganization[row.id] || false}
+                                                                onChange={(e) => handleRulesCheckboxChange(row.id, e.target.checked)}
+                                                                crossOrigin={undefined}
+                                                                className="h-5 w-5 rounded-full border-gray-900/20 bg-gray-900/10 transition-all hover:scale-105 hover:before:opacity-0"
+                                                            />
+                                                        )},
+                                                ]}
+                                                columns={[
+                                                    {key: "name", name: "Organization Name"},
+                                                    {key: "name", name: "Rule Description"},
+                                                ]}
+                                                title={"Organizations"}
+                                                perPage={5}
+                                            />
+                                        </>
+                                    },
                                 ]}/>
                             </div>
                         </DialogBody>

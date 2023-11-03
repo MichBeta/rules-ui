@@ -64,8 +64,12 @@ export function Parts() {
             <Stepper
                 activeStep={activeStep}
                 onMouseEnter={() => console.log(selectedParts.length)}
+                activeLineClassName={selectedParts.length > 0?"bg-gray-300":""}
             >
-                <Step onClick={() => setActiveStep(selectedParts.length > 0?activeStep:0)}>
+                <Step
+                    onClick={() => setActiveStep(selectedParts.length > 0?activeStep:0)}
+                    completedClassName={selectedParts.length > 0?"bg-gray-300 text-black":""}
+                >
                     <GiSteeringWheel className="h-5 w-5" />
                     <div className="absolute -bottom-[4.5rem] w-max text-center">
                         <Typography
@@ -82,7 +86,10 @@ export function Parts() {
                         </Typography>
                     </div>
                 </Step>
-                <Step onClick={() => setActiveStep(filteredSection.length>1?selectedParts.length > 0?activeStep:1:activeStep)}>
+                <Step
+                    onClick={() => setActiveStep(filteredSection.length>1?selectedParts.length > 0?activeStep:1:activeStep)}
+                    completedClassName={selectedParts.length > 0?"bg-gray-300 text-black":""}
+                >
                     <TbNewSection className="h-5 w-5" />
                     <div className="absolute -bottom-[4.5rem] w-max text-center">
                         <Typography
@@ -99,7 +106,10 @@ export function Parts() {
                         </Typography>
                     </div>
                 </Step>
-                <Step onClick={() => setActiveStep(parts !== undefined?selectedParts.length > 0?activeStep:2:activeStep)}>
+                <Step
+                    onClick={() => setActiveStep(parts !== undefined?selectedParts.length > 0?activeStep:2:activeStep)}
+                    completedClassName={selectedParts.length > 0?"bg-gray-300 text-black":""}
+                >
                     <GiCarWheel className="h-5 w-5" />
                     <div className="absolute -bottom-[4.5rem] w-max text-center">
                         <Typography
