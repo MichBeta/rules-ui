@@ -35,16 +35,16 @@ export function ClaimFields() {
     if (isLoading) return <div>Loading...</div>
     if (error) return <div>No claim fields found</div>
     console.log(data)
-    const selectedCategoryFields = metadata.find(item => item.name === selectedCategory)?.fields;
+    const selectedCategoryFields = metadata.find(item => item.name.toLowerCase() === selectedCategory.toLowerCase())?.fields;
     const parser = new DOMParser();
-    const selectedCompareOperators = selectedCategoryFields?.find(item => item.name === selectedField)?.compareOperators.map(item => {
+    const selectedCompareOperators = selectedCategoryFields?.find(item => item.name.toLowerCase() === selectedField.toLowerCase())?.compareOperators.map(item => {
         const encodedString = item.name;
         const dom = parser.parseFromString('<!doctype html><body>' + encodedString, 'text/html').body.textContent;
         return {code: item.code, name: dom};
     })
-    const metadataType = selectedCategoryFields?.find(item => item.name === selectedField)?.type;
-    const claimFieldType = data?.filter(item => item.name === selectedField)[0]?.type;
-    const claimFieldxPath = data?.filter(item => item.name === selectedField)[0]?.xpath;
+    const metadataType = selectedCategoryFields?.find(item => item.name.toLowerCase() === selectedField.toLowerCase())?.type;
+    const claimFieldType = data?.filter(item => item.name.toLowerCase() === selectedField.toLowerCase())[0]?.type;
+    const claimFieldxPath = data?.filter(item => item.name.toLowerCase() === selectedField.toLowerCase())[0]?.xpath;
     return (
         <div className={"overflow-auto"}>
             {data ?
