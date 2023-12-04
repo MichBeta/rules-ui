@@ -12,6 +12,10 @@ import {claimFieldApi} from "@/redux/services/claimFieldApi";
 import {enumerationApi} from "@/redux/services/enumerationApi";
 import {partApi} from "@/redux/services/partApi";
 import {sectionApi} from "@/redux/services/sectionApi";
+import {axnClaimsApi} from "@/redux/services/axnClaimsApi";
+import {axnReportTypesApi} from "@/redux/services/axnReportTypesApi";
+import {axnReportVersionsApi} from "@/redux/services/axnReportVersionsApi";
+import {axnReportDownloaderApi} from "@/redux/services/axnReportDownloaderApi";
 import {setupListeners} from "@reduxjs/toolkit/dist/query";
 
 export const store = configureStore({
@@ -29,6 +33,10 @@ export const store = configureStore({
         [enumerationApi.reducerPath]: enumerationApi.reducer,
         [partApi.reducerPath]: partApi.reducer,
         [sectionApi.reducerPath]: sectionApi.reducer,
+        [axnClaimsApi.reducerPath]: axnClaimsApi.reducer,
+        [axnReportTypesApi.reducerPath]: axnReportTypesApi.reducer,
+        [axnReportVersionsApi.reducerPath]: axnReportVersionsApi.reducer,
+        [axnReportDownloaderApi.reducerPath]: axnReportDownloaderApi.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
         .concat(userApi.middleware)
@@ -39,6 +47,10 @@ export const store = configureStore({
         .concat(enumerationApi.middleware)
         .concat(partApi.middleware)
         .concat(sectionApi.middleware)
+        .concat(axnClaimsApi.middleware)
+        .concat(axnReportTypesApi.middleware)
+        .concat(axnReportVersionsApi.middleware)
+        .concat(axnReportDownloaderApi.middleware),
 });
 
 setupListeners(store.dispatch);

@@ -13,9 +13,10 @@ interface TableProps {
     title: string;
     perPage: number;
     actions?: boolean;
+    columnID?: string;
 }
 
-const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns , title, perPage,actions}) => {
+const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns , title, perPage,actions,columnID}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [currentData, setCurrentData] = useState(data.slice(0, perPage));
 
@@ -103,7 +104,7 @@ const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns 
                     </thead>
                     <tbody>
                     {currentData.map((row) => (
-                        <tr key={row.id} className="even:bg-blue-gray-50/50">
+                        <tr key={row[columnID??'id']} className="even:bg-blue-gray-50/50">
                             {customColumns ? customColumns.map((col) => (
                                 <td key={col.key} className="p-4">
                                     {col.render(row)}

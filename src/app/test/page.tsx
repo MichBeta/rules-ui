@@ -4,6 +4,7 @@ import {decrement, increment} from "@/redux/features/counterSlice";
 import {setRuleCode, clearRuleCode} from "@/redux/features/ruleCodeSlice";
 import {Rule} from "@/components/test/rule";
 import {Parts} from "@/components/test/part";
+import {AxnClaimViewer} from "@/components/test/axnClaimViewer";
 import {Predicate} from "@/components/test/predicate";
 import {ClaimFields} from "@/components/test/claimField";
 import {Enumerations} from "@/components/test/enumeration";
@@ -19,6 +20,7 @@ const data = [
     { id: 3, label: "Enumerations", value:"enumerations", content: <Enumerations /> },
     { id: 3, label: "Validator", value:"validator", content: <Validator/> },
     { id: 4, label: "Parts", value:"parts", content: <Parts/> },
+    { id: 5, label: "AxnClaimViewer", value:"axnClaimViewer", content: <AxnClaimViewer/> },
 ]
 
 function TestPage() {

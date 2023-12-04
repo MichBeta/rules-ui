@@ -55,6 +55,7 @@ export function Groups() {
                         title={"Groups"}
                         perPage={8}
                         actions={true}
+                        columnID={"name"}
                     />
                     <Dialog open={open} handler={handleOpen} size={"xl"}>
                         <DialogHeader>

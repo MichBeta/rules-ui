@@ -17,7 +17,6 @@ function LoginPage() {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log(credential)
         axios.post('/api/auth/login', credential).then(res => {
             if (res.status === 200) {
                 router.push('/')

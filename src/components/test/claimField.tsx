@@ -34,7 +34,6 @@ export function ClaimFields() {
 
     if (isLoading) return <div>Loading...</div>
     if (error) return <div>No claim fields found</div>
-    console.log(data)
     const selectedCategoryFields = metadata.find(item => item.name.toLowerCase() === selectedCategory.toLowerCase())?.fields;
     const parser = new DOMParser();
     const selectedCompareOperators = selectedCategoryFields?.find(item => item.name.toLowerCase() === selectedField.toLowerCase())?.compareOperators.map(item => {
