@@ -4,6 +4,8 @@ import {Card, CardBody, CardHeader, CardFooter, Tooltip, Typography, Input} from
 import {AiOutlineEdit, AiOutlineDelete} from "react-icons/ai";
 import {BiArchiveIn} from "react-icons/bi";
 import {FaMagnifyingGlass} from "react-icons/fa6";
+import {setId} from "@/redux/features/tableRowIdSlice";
+import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 
 interface TableProps {
     data: any[];
@@ -17,6 +19,7 @@ interface TableProps {
 }
 
 const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns , title, perPage,actions,columnID}) => {
+    const dispatch = useAppDispatch();
     const [currentPage, setCurrentPage] = useState(1);
     const [currentData, setCurrentData] = useState(data.slice(0, perPage));
 
@@ -42,8 +45,8 @@ const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns 
     }
 
     return (
-        <Card className="h-full w-full overflow-auto">
-            <CardBody>
+        <Card className="h-full w-full">
+            <CardBody className="overflow-auto">
                 {searchable ?
                     <CardHeader floated={false} shadow={false} className="rounded-none">
                         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
@@ -58,7 +61,7 @@ const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns 
                         </div>
                     </CardHeader>
                     : null}
-                <table className="w-full min-w-max table-auto text-left">
+                <table>
                     <thead>
                     <tr>
                         {customColumns ? customColumns.map((head) => (
@@ -104,7 +107,7 @@ const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns 
                     </thead>
                     <tbody>
                     {currentData.map((row) => (
-                        <tr key={row[columnID??'id']} className="even:bg-blue-gray-50/50">
+                        <tr key={row[columnID??'id']} className="even:bg-blue-gray-50/50" onClick={()=>dispatch(setId(row[columnID??'id']))}>
                             {customColumns ? customColumns.map((col) => (
                                 <td key={col.key} className="p-4">
                                     {col.render(row)}

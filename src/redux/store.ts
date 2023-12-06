@@ -4,6 +4,7 @@ import ruleCodeReducer from './features/ruleCodeSlice';
 import groupCodeReducer from './features/groupCodeSlice';
 import credentialReducer from './features/credentialSlice';
 import sidebarReducer from './features/sidebarSlice';
+import tableRowReducer from './features/tableRowIdSlice';
 import {userApi} from "@/redux/services/userApi";
 import {ruleApi} from "@/redux/services/ruleApi";
 import {groupApi} from "@/redux/services/groupApi";
@@ -15,7 +16,6 @@ import {sectionApi} from "@/redux/services/sectionApi";
 import {axnClaimsApi} from "@/redux/services/axnClaimsApi";
 import {axnReportTypesApi} from "@/redux/services/axnReportTypesApi";
 import {axnReportVersionsApi} from "@/redux/services/axnReportVersionsApi";
-import {axnReportDownloaderApi} from "@/redux/services/axnReportDownloaderApi";
 import {setupListeners} from "@reduxjs/toolkit/dist/query";
 
 export const store = configureStore({
@@ -25,6 +25,7 @@ export const store = configureStore({
         groupCodeReducer: groupCodeReducer,
         credentialReducer: credentialReducer,
         sidebarReducer: sidebarReducer,
+        tableRowReducer: tableRowReducer,
         [userApi.reducerPath]: userApi.reducer,
         [ruleApi.reducerPath]: ruleApi.reducer,
         [groupApi.reducerPath]: groupApi.reducer,
@@ -36,7 +37,6 @@ export const store = configureStore({
         [axnClaimsApi.reducerPath]: axnClaimsApi.reducer,
         [axnReportTypesApi.reducerPath]: axnReportTypesApi.reducer,
         [axnReportVersionsApi.reducerPath]: axnReportVersionsApi.reducer,
-        [axnReportDownloaderApi.reducerPath]: axnReportDownloaderApi.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
         .concat(userApi.middleware)
@@ -50,7 +50,6 @@ export const store = configureStore({
         .concat(axnClaimsApi.middleware)
         .concat(axnReportTypesApi.middleware)
         .concat(axnReportVersionsApi.middleware)
-        .concat(axnReportDownloaderApi.middleware),
 });
 
 setupListeners(store.dispatch);

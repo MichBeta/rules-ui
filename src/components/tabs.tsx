@@ -12,11 +12,22 @@ import {
 import {TabModel} from "@/models/tab";
 
 
-export default function TabsComponent({data}: {data: TabModel[]}) {
-    const [activeTab, setActiveTab] = useState<TabModel>(data[0]);
+export default function TabsComponent({ data }: { data?: TabModel[] }) {
+    const [activeTab, setActiveTab] = useState<TabModel | undefined>(data?.[0]);
+
+    if (!data || data.length === 0) {
+        return null; // or return some default component or message for empty data
+    }
 
     return (
-        <Tabs id={"custom-animation"} value={activeTab.value} onChange={setActiveTab}>
+        <Tabs
+            id={"custom-animation"}
+            value={activeTab?.value}
+            onChange={(newValue: number | string) =>
+                setActiveTab(data.find((tab) => tab.value === newValue))
+            }
+            className={"grid"}
+        >
             <TabsHeader>
                 {data.map((tab) => (
                     <Tab key={`${tab.value}-${tab.id}`} value={tab.value}>
@@ -26,11 +37,11 @@ export default function TabsComponent({data}: {data: TabModel[]}) {
             </TabsHeader>
             <TabsBody
                 animate={{
-                    initial:{ y: 250 },
+                    initial: { y: 250 },
                     mount: { y: 0 },
                     unmount: { y: 250 },
                 }}
-                >
+            >
                 {data.map((tab) => (
                     <TabPanel key={`${tab.value}-${tab.id}`} value={tab.value}>
                         {tab.content}
@@ -40,3 +51,4 @@ export default function TabsComponent({data}: {data: TabModel[]}) {
         </Tabs>
     );
 }
+

@@ -3,7 +3,7 @@ import {createApi,fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 export const axnReportDownloaderApi = createApi({
     reducerPath: 'axnReportDownloaderApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:8080/api'
+        baseUrl: 'https://clms.tkg-rms-dev.usdc01.solera.farm'
     }),
     endpoints: (builder) => ({
         //`/download-report?workItemPk=${id}&reportVersion=${version}`
