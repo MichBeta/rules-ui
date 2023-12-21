@@ -3,7 +3,7 @@ import {useGetAxnClaimsQuery} from "@/redux/services/axnClaimsApi";
 import Table from "@/components/table";
 import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {useGetAxnReportTypesQuery} from "@/redux/services/axnReportTypesApi";
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import {
     Checkbox, Dialog,
     DialogBody,
@@ -21,6 +21,12 @@ import {
 import TabsComponent from "@/components/tabs";
 import {Rule} from "@/redux/services/ruleApi";
 import {useGetAxnReportVersionsQuery} from "@/redux/services/axnReportVersionsApi";
+import {Predicate} from "@/components/test/predicate";
+import {ClaimFields} from "@/components/test/claimField";
+import {Enumerations} from "@/components/test/enumeration";
+import {Validator} from "@/components/test/validator";
+import {Parts} from "@/components/test/part";
+import {AxnClaimViewer} from "@/components/test/axnClaimViewer";
 
 interface ClaimDataItem {
     id: number;
@@ -31,47 +37,85 @@ interface ClaimDataItem {
 
 export function AxnWorklist() {
     const owner = Cookies.get("credentials")?.split("|")[2] || "";
-    const tableRowId = useAppSelector(state => state.tableRowReducer.id);
-    const claim = useGetAxnReportTypesQuery(tableRowId)
+    const claimnumber = useAppSelector(state => state.tableRowReducer.id);
+    const claim = useGetAxnReportTypesQuery(claimnumber)
     const {data, error, isLoading, isFetching} = useGetAxnClaimsQuery(owner)
-    const [workItemPK, setWorkItemPK] = useState(0);
-    const versions = useGetAxnReportVersionsQuery(workItemPK)
     const [open, setOpen] = useState(false);
     const [claimData, setClaimData] = useState<ClaimDataItem[]>([]);
 
     useEffect(() => {
-        if (claim.data && versions.data) {
-            const updatedClaimData = claim.data.map((item) => {
-                const jsxContent = (
-                    <>
-                        {versions.data?.map((_, index) => (
-                            <a
-                                key={index}
-                                href={`https://clms.tkg-rms-dev.usdc01.solera.farm/download-report?workItemPk=${item.WORK_ITEM_PK}&reportVersion=${index}`}
-                                target="_blank"
-                                className="transition ease-in-out bg-white hover:-translate-y-1 hover:scale-110 hover:bg-[rgb(50,37,94)] hover:text-white duration-300"
-                            >
-                                {/* Your JSX structure */}
-                            </a>
-                        ))}
-                    </>
-                );
-
-                return {
-                    id: item.WORK_ITEM_PK,
-                    label:
-                        item.ITEM_TYPE === "I"
-                            ? "Internal"
-                            : item.ITEM_TYPE === "Q"
-                                ? "Enterprise"
-                                : "Partner",
-                    value: item.WORK_ITEM_PK.toString(),
-                    content: jsxContent,
-                };
+        if (claim.data) {
+            let internalClaimContent: JSX.Element[] = [];
+            let enterpriseClaimContent: JSX.Element[] = [];
+            let extraClaimContent: JSX.Element[] = [];
+            claim.data.forEach((claim, index) => {
+                if (claim.FILENAME === "xpertinternalreport.pdf") {
+                    internalClaimContent.push(<a
+                        key={index}
+                        href={`http://localhost:8080/api/getReportBySftp?caseId=${claim.CASEID}&id=${claim.ID}`}
+                        target="_blank"
+                        className="transition ease-in-out bg-white hover:-translate-y-1 hover:bg-[rgb(50,37,94)] hover:text-white duration-300"
+                    >
+                        <Typography>
+                            <span className={"font-bold"}>Estimate Type:</span> {claim.TYPE}
+                        </Typography>
+                        <Typography>
+                            <span className={"font-bold"}>Estimate Version:</span> {claim.VERSION}
+                        </Typography>
+                    </a>);
+                } else if (claim.FILENAME === "compliancecheckreport.pdf") {
+                    enterpriseClaimContent.push(<a
+                        key={index}
+                        href={`http://localhost:8080/api/getReportBySftp?caseId=${claim.CASEID}&id=${claim.ID}`}
+                        target="_blank"
+                        className="transition ease-in-out bg-white hover:-translate-y-1 hover:scale-110 hover:bg-[rgb(50,37,94)] hover:text-white duration-300"
+                    >
+                        <Typography>
+                            <span className={"font-bold"}>Estimate Type:</span> {claim.TYPE}
+                        </Typography>
+                        <Typography>
+                            <span className={"font-bold"}>Estimate Version:</span> {claim.VERSION}
+                        </Typography>
+                    </a>);
+                } else {
+                    extraClaimContent.push(<a
+                        key={index}
+                        href={`http://localhost:8080/api/getReportBySftp?caseId=${claim.CASEID}&id=${claim.ID}`}
+                        target="_blank"
+                        className="transition ease-in-out bg-white hover:-translate-y-1 hover:scale-110 hover:bg-[rgb(50,37,94)] hover:text-white duration-300"
+                    >
+                        <Typography>
+                            <span className={"font-bold"}>Estimate Filename:</span> {claim.FILENAME}
+                        </Typography>
+                        <Typography>
+                            <span className={"font-bold"}>Version:</span> {claim.VERSION}
+                        </Typography>
+                    </a>);
+                }
             });
-            setClaimData(updatedClaimData);
+            console.log(internalClaimContent);
+            setClaimData([
+                {
+                    id: 1,
+                    label: "Internal Claim",
+                    value: "internalClaim",
+                    content: <div className="flex flex-col gap-6">{internalClaimContent}</div>
+                },
+                {
+                    id: 2,
+                    label: "Enterprise Claim",
+                    value: "enterpriseClaim",
+                    content: <div className="flex flex-col gap-6">{enterpriseClaimContent}</div>
+                },
+                {
+                    id: 3,
+                    label: "Extra Claim",
+                    value: "extraClaim",
+                    content: <div className="flex flex-col gap-6">{extraClaimContent}</div>
+                },
+            ]);
         }
-    }, [claim.data, versions.data]);
+    }, [claim.data]);
     if (isLoading) return <div>Loading...</div>
     if (error) return <div>No claims found</div>
     const handleOpen = () => {
@@ -116,9 +160,9 @@ export function AxnWorklist() {
                         searchable={true}
                         customColumns={[
                             {
-                                key: "openModal", name: "OpenModal", render: (row: any) => (
+                                key: "Actions", name: "Actions", render: (row: any) => (
                                     <Button color="blue" onClick={() => setOpen(!open)}>
-                                        <Typography color="white">Open</Typography>
+                                        <Typography color="white">PDFs</Typography>
                                     </Button>
                                 )
                             },
@@ -130,7 +174,7 @@ export function AxnWorklist() {
 
             <Dialog open={open} handler={handleOpen} size={"xl"}>
                 <DialogHeader>
-                    <Typography color="blue-gray">{tableRowId}</Typography>
+                    <Typography color="blue-gray">{claimnumber}</Typography>
                 </DialogHeader>
                 <DialogBody>
                     <div className="mb-4 flex flex-col gap-6">

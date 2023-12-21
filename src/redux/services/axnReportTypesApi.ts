@@ -6,8 +6,8 @@ export const axnReportTypesApi = createApi({
         baseUrl: 'https://clms.tkg-rms-dev.usdc01.solera.farm/api'
     }),
     endpoints: (builder) => ({
-        getAxnReportTypes: builder.query<[{WORK_ITEM_PK:number, ITEM_TYPE:string}], string>({
-            query: (id) => `/getReportTypes?claimNumber=${id}`,
+        getAxnReportTypes: builder.query<[{CASEID:string, ID:string, TYPE:string, FILENAME:string, VERSION:number}], string>({
+            query: (id) => `/getServerPdfList?claimNumber=${id}`,
         }),
     }),
 })

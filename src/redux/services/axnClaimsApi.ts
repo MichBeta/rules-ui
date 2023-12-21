@@ -12,7 +12,7 @@ import {BussinesStatus} from "@/models/bussinesStatus";
 export const axnClaimsApi = createApi({
     reducerPath: 'axnClaimsApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://clms.tkg-rms-dev.usdc01.solera.farm'
+        baseUrl: 'https://clms.tkg-rms-dev.usdc01.solera.farm/api'
     }),
     endpoints: (builder) => ({
         getAxnClaims: builder.query<WorklistModel[], string>({

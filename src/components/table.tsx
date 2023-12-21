@@ -61,7 +61,7 @@ const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns 
                         </div>
                     </CardHeader>
                     : null}
-                <table>
+                <table className="h-full w-full">
                     <thead>
                     <tr>
                         {customColumns ? customColumns.map((head) => (
