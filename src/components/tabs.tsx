@@ -41,7 +41,6 @@ export default function TabsComponent({ data }: { data?: TabModel[] }) {
                     mount: { y: 0 },
                     unmount: { y: 250 },
                 }}
-                className={"overflow-scroll"}
             >
                 {data.map((tab) => (
                     <TabPanel key={`${tab.value}-${tab.id}`} value={tab.value}>
