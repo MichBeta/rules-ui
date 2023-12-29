@@ -2,7 +2,6 @@
 import TabsComponent from "@/components/tabs";
 import {Rules} from "@/components/rules";
 import {Groups} from "@/components/groups";
-import React from "react";
 import {TabModel} from "@/models/tab";
 import {Import} from "@/components/import";
 

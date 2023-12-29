@@ -20,7 +20,7 @@ interface GroupAssignment {
     ruleIds: string[];
 }
 
-interface Group {
+export interface Group {
     entityId: string;
     name: string;
     owner: string;

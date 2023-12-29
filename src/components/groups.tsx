@@ -4,34 +4,19 @@ import Table from "@/components/table";
 import {
     Button,
     Typography,
-    Dialog,
-    DialogHeader,
-    DialogBody,
-    DialogFooter,
-    Input,
-    Checkbox,
-    Textarea
 } from "@material-tailwind/react";
-import TabsComponent from "@/components/tabs";
 import {useState} from "react";
-import {Rule} from "@/redux/services/ruleApi";
+
 import Cookies from "js-cookie";
+import GroupEditor from '@/components/groupEditor';
 
 export function Groups() {
     const owner = Cookies.get("credentials")?.split("|")[2] || "";
     const {data, error, isLoading, isFetching} = useGetGroupsByOrganizationIdQuery(owner)
-    const rules = useGetRulesByOwnerQuery(owner)
     const [open, setOpen] = useState(false);
-    const [selectedRules, setSelectedRules] = useState<Record<string, boolean>>({});
+    const [selectedGroup, setSelectedGroup] = useState<string>(null);
 
-    const handleCheckboxChange = (ruleId: string, checked: boolean) => {
-        setSelectedRules(prevState => ({
-            ...prevState,
-            [ruleId]: checked
-        }));
-    }
     const handleOpen = () => {
-        setSelectedRules({})
         setOpen(!open)
     };
     if (isLoading) return <div>Loading...</div>
@@ -57,56 +42,7 @@ export function Groups() {
                         actions={true}
                         columnID={"name"}
                     />
-                    <Dialog open={open} handler={handleOpen} size={"xl"}>
-                        <DialogHeader>
-                            <Typography color="blue-gray">Add Group</Typography>
-                        </DialogHeader>
-                        <DialogBody>
-                            <div className="mb-4 flex flex-col gap-6">
-                                <TabsComponent data={[
-                                    { id: 1, label: "Description", value:"description", content: <>
-                                            <Input size="lg" label="Code" crossOrigin={undefined} type="text" required={true}/>
-                                            <Textarea
-                                                size={"lg"}
-                                                label={"Description"}
-                                                required={true}
-                                            />
-                                        </> },
-                                    { id: 2, label: "Rules", value:"configuration", content: <>
-                                            <Table
-                                                data={rules.data as Rule[]}
-                                                searchable={true}
-                                                customColumns={[
-                                                    {key: "selected", name: "Selected", render: (row: Rule) => (
-                                                            <Checkbox
-                                                                checked={selectedRules[row.ruleCode] || false}
-                                                                onChange={(e) => handleCheckboxChange(row.ruleCode, e.target.checked)}
-                                                                crossOrigin={undefined}
-                                                                className="h-5 w-5 rounded-full border-gray-900/20 bg-gray-900/10 transition-all hover:scale-105 hover:before:opacity-0"
-                                                            />
-                                                        )},
-                                                ]}
-                                                columns={[
-                                                    {key: "ruleCode", name: "Rule Code"},
-                                                    {key: "name", name: "Rule Description"},
-                                                ]}
-                                                title={"Rules"}
-                                                perPage={5}
-                                            />
-                                        </> },
-                                    { id: 3, label: "Summary", value:"Precondition", content: <></> },
-                                ]}/>
-                            </div>
-                        </DialogBody>
-                        <DialogFooter>
-                            <Button color="blue" type={"submit"} ripple={true}>
-                                Save
-                            </Button>
-                            <Button color="red" ripple={true} onClick={handleOpen}>
-                                Cancel
-                            </Button>
-                        </DialogFooter>
-                    </Dialog>
+                    <GroupEditor handleOpen={handleOpen} owner={owner} open={open} idGroup={selectedGroup}/>
                 </>
                 : null}
         </div>
