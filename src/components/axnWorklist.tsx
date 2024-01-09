@@ -4,6 +4,7 @@ import Table from "@/components/table";
 import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {useGetAxnReportTypesQuery} from "@/redux/services/axnReportTypesApi";
 import React, {useState, useEffect} from "react";
+import {claimColumnToClaimNameMap} from "@/app/utils";
 import {
     Checkbox, Dialog,
     DialogBody,
@@ -224,6 +225,7 @@ export function AxnWorklist() {
     };
     return (
         <div className={"flex flex-col space-y-4"}>
+            <button>Show/Hide Columns</button>
             {data
                 ?
                 <>
@@ -268,6 +270,7 @@ export function AxnWorklist() {
                                 )
                             },
                         ]}
+                        showColumns={["CLAIMNUMBER", "SEVERITY", "PERCENTAGEVARIANCE", "DOLLARVARIANCE", "ACCIDENTDATETIME", "GROSSTOTAL", "VEHICLE"]}
                     />
                 </>
                 : null

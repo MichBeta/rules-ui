@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Pagination from "@/components/pagination";
 import {Card, CardBody, CardHeader, CardFooter, Tooltip, Typography, Input} from "@material-tailwind/react";
 import {AiOutlineEdit, AiOutlineDelete} from "react-icons/ai";
@@ -6,22 +6,25 @@ import {BiArchiveIn} from "react-icons/bi";
 import {FaMagnifyingGlass} from "react-icons/fa6";
 import {setId} from "@/redux/features/tableRowIdSlice";
 import {useAppDispatch, useAppSelector} from "@/redux/hooks";
+import {ClaimRow} from "@/models/claimField";
 
 interface TableProps {
     data: any[];
     searchable?: boolean;
     columns: any[];
     customColumns?: any[];
+    showColumns?: Array<keyof ClaimRow>;
     title: string;
     perPage: number;
     actions?: boolean;
     columnID?: string;
 }
 
-const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns , title, perPage,actions,columnID}) => {
+const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns , showColumns, title, perPage,actions,columnID}) => {
     const dispatch = useAppDispatch();
     const [currentPage, setCurrentPage] = useState(1);
     const [currentData, setCurrentData] = useState(data.slice(0, perPage));
+    const [currentColumns, setCurrentColumns] = useState(columns);
 
     const totalPages = Math.ceil(data.length / perPage);
 
@@ -42,6 +45,50 @@ const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns 
         });
         setCurrentData(filteredData.slice(0, perPage));
         setCurrentPage(1);
+    }
+
+    const getSubsetOfProperties = <T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> => {
+        const subset: Pick<T, K> = {} as Pick<T, K>;
+
+        keys.forEach((key) => {
+            if (obj.hasOwnProperty(key)) {
+                subset[key] = obj[key];
+            }
+        });
+
+        return subset;
+    };
+
+    if (showColumns){
+        useEffect(() => {
+        let objCopy: any[] = [];
+        let columnsCopy: any[] = [];
+        console.log(currentColumns);
+        data.map(rows => {
+            const subset = getSubsetOfProperties(rows, showColumns);
+            if (columnsCopy.length === 0) {
+                // iterate subset and push keys and names to columnsCopy
+                currentColumns.map(value => {
+                    if (Object.keys(subset).includes(value.key)) {
+                        columnsCopy.push({key: value.key, name: value.name});
+                    }
+                });
+
+                console.log(columnsCopy);
+
+            }
+            //console.log(Array.from(columnsCopy).flat());
+            objCopy.push(subset);
+        });
+        console.log("unaltered");
+        console.log(currentData);
+        setCurrentData(objCopy.slice(0, perPage));
+        setCurrentPage(1);
+        setCurrentColumns(Array.from(columnsCopy).flat());
+        console.log(currentColumns);
+        console.log("altered");
+        console.log(currentData);
+        }, [showColumns]);
     }
 
     return (
@@ -78,7 +125,7 @@ const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns 
                                 </Typography>
                             </th>
                         )) : null}
-                        {columns.map((head) => (
+                        {currentColumns.map((head) => (
                             <th
                                 key={head.key}
                                 className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
@@ -113,7 +160,7 @@ const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns 
                                     {col.render(row)}
                                 </td>
                             )) : null}
-                            {columns.map((col) => (
+                            {currentColumns.map((col) => (
                                 <td key={col.key} className="p-4">
                                     <Typography variant="small" color="blue-gray"
                                                 className="font-normal">{row[col.key]}</Typography>
