@@ -16,6 +16,7 @@ import {sectionApi} from "@/redux/services/sectionApi";
 import {axnClaimsApi} from "@/redux/services/axnClaimsApi";
 import {axnReportTypesApi} from "@/redux/services/axnReportTypesApi";
 import {axnReportVersionsApi} from "@/redux/services/axnReportVersionsApi";
+import {userConfigApi} from "@/redux/services/userConfigApi";
 import {setupListeners} from "@reduxjs/toolkit/dist/query";
 
 export const store = configureStore({
@@ -37,6 +38,7 @@ export const store = configureStore({
         [axnClaimsApi.reducerPath]: axnClaimsApi.reducer,
         [axnReportTypesApi.reducerPath]: axnReportTypesApi.reducer,
         [axnReportVersionsApi.reducerPath]: axnReportVersionsApi.reducer,
+        [userConfigApi.reducerPath]: userConfigApi.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware()
         .concat(userApi.middleware)
@@ -50,6 +52,7 @@ export const store = configureStore({
         .concat(axnClaimsApi.middleware)
         .concat(axnReportTypesApi.middleware)
         .concat(axnReportVersionsApi.middleware)
+        .concat(userConfigApi.middleware)
 });
 
 setupListeners(store.dispatch);
