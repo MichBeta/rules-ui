@@ -1,5 +1,6 @@
 export default interface UserConfig {
     userSettingsId: string,
+    id: string,
     views: view[],
 }
 

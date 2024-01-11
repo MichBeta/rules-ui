@@ -12,7 +12,7 @@ import {
 import {TabModel} from "@/models/tab";
 
 
-export default function TabsComponent({ data, setAccordionOpen }: { data: TabModel[], setAccordionOpen: (value: number) => void }) {
+export default function TabsComponent({ data, setAccordionOpen }: { data: TabModel[], setAccordionOpen?: (value: number) => void }) {
     const [activeTab, setActiveTab] = useState<TabModel | undefined>(data?.[0]);
 
     if (!data || data.length === 0) {
@@ -25,17 +25,22 @@ export default function TabsComponent({ data, setAccordionOpen }: { data: TabMod
             value={activeTab?.value}
             onChange={(newValue: number | string) => {
                 setActiveTab(data.find((tab) => tab.value === newValue))
+                if(setAccordionOpen !== undefined)
                 setAccordionOpen(0)
             }
             }
             className={"grid"}
         >
             <TabsHeader>
-                {data.map((tab) => (
-                    <Tab key={`${tab.value}-${tab.id}`} value={tab.value} onClick={() => {tab.id==1?setAccordionOpen(1):setAccordionOpen(3)}}>
+                {data.map((tab) => {
+                    if(setAccordionOpen === undefined) return (<Tab key={`${tab.value}-${tab.id}`} value={tab.value}>
                         {tab.label}
-                    </Tab>
-                ))}
+                    </Tab>)
+
+                return (<Tab key={`${tab.value}-${tab.id}`} value={tab.value} onClick={() => {tab.id==1?setAccordionOpen(1):setAccordionOpen(3)}}>
+                        {tab.label}
+                    </Tab>)
+                })}
             </TabsHeader>
             <TabsBody
                 animate={{

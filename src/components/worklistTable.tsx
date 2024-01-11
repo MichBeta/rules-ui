@@ -1,11 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import Pagination from "@/components/pagination";
-import {Card, CardBody, CardHeader, CardFooter, Tooltip, Typography, Input, Tabs, Chip, TabsHeader, Tab, IconButton, Button} from "@material-tailwind/react";
-import {AiOutlineEdit, AiOutlineDelete} from "react-icons/ai";
-import {BiArchiveIn} from "react-icons/bi";
+import {
+    Card,
+    CardBody,
+    CardHeader,
+    CardFooter,
+    Tooltip,
+    Typography,
+    Input,
+    Tabs,
+    Chip,
+    TabsHeader,
+    Tab,
+    IconButton,
+    Button,
+    Select,
+    Option, Menu, MenuHandler, Checkbox,MenuList, MenuItem
+} from "@material-tailwind/react";
 import {FaMagnifyingGlass} from "react-icons/fa6";
 import { LuChevronsUpDown } from "react-icons/lu";
-import { FaPlus, FaEye, FaFilePdf } from "react-icons/fa";
+import { FaFileDownload  } from "react-icons/fa";
 import {setId} from "@/redux/features/tableRowIdSlice";
 import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {ClaimRow} from "@/models/claimField";
@@ -54,14 +68,13 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
     const [currentColumns, setCurrentColumns] = useState(columns);
     const [srtBy, setSrtBy] = useState(sortBy);
     const [srtAscending, setSrtAscending] = useState(sortAscending);
-
-    console.log("currentData", currentData);
-    const totalPages = Math.ceil(data.length / perPage);
+    const [claimsPerPage, setClaimsPerPage] = useState(perPage);
+    const totalPages = Math.ceil(data.length / claimsPerPage);
 
     const onPageChange = (page: number) => {
         setCurrentPage(page);
-        const start = (page - 1) * perPage;
-        const end = start + perPage;
+        const start = (page - 1) * claimsPerPage;
+        const end = start + claimsPerPage;
         setCurrentData(data.slice(start, end));
     };
 
@@ -73,7 +86,7 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                 return cellValue !== null && cellValue.toString().toLowerCase().includes(value);
             });
         });
-        setCurrentData(filteredData.slice(0, perPage));
+        setCurrentData(filteredData.slice(0, claimsPerPage));
         setCurrentPage(1);
     }
 
@@ -89,45 +102,121 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
         return subset;
     };
 
+    const columnCheckboxHandler = (columnKey:string) => {
+        if (currentColumns.some((val) => val.key === columnKey)) {
+            setCurrentColumns(currentColumns.filter((val) => val.key !== columnKey));
+        }
+        else {
+            const column = columns.find((val) => val.key === columnKey);
+            if (column) {
+                setCurrentColumns([...currentColumns, column]);
+            }
+        }
+        let objCopy: any[] = [];
+        let columnsCopy: any[] = [];
+        data.map(rows => {
+            console.log(currentColumns);
+            const subset = getSubsetOfProperties(rows, currentColumns.map((val) => val.key));
+            if (columnsCopy.length === 0) {
+                // iterate subset and push keys and names to columnsCopy
+                currentColumns?.map(value => {
+                    if (Object.keys(subset).includes(value)) {
+                        columnsCopy.push({key: value, name: claimColumnToClaimName(value)});
+                    }
+                });
+
+            }
+            console.log(subset);
+            objCopy.push(subset);
+        });
+        setCurrentData(objCopy.slice(0, claimsPerPage));
+    }
+
 
     useEffect(() => {
         if (showColumns){
             let objCopy: any[] = [];
             let columnsCopy: any[] = [];
             data.map(rows => {
-                const subset = getSubsetOfProperties(rows, showColumns);
+                const subset = getSubsetOfProperties(rows, showColumns as (keyof ClaimRow)[]);
                 if (columnsCopy.length === 0) {
                     // iterate subset and push keys and names to columnsCopy
-                    showColumns.map(value => {
+                    showColumns?.map(value => {
                         if (Object.keys(subset).includes(value)) {
                             columnsCopy.push({key: value, name: claimColumnToClaimName(value)});
                         }
                     });
 
                 }
-                //console.log(Array.from(columnsCopy).flat());
                 objCopy.push(subset);
             });
-            setCurrentData(objCopy.slice(0, perPage));
+            setCurrentData(objCopy.slice(0, claimsPerPage));
             setCurrentPage(1);
             setCurrentColumns(Array.from(columnsCopy).flat());
         }
-    }, [showColumns]);
+    }, [showColumns,claimsPerPage]);
     return (
         <Card className="h-full w-full">
-            <CardHeader floated={false} shadow={false} className="rounded-none">
+            <CardHeader floated={false} shadow={false} className="rounded-none overflow-visible">
                 <div className="mb-8 flex items-center justify-between gap-8">
                     <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                        <Button variant="outlined" size="sm">
-                            Columns
-                        </Button>
+                        <Menu
+                            dismiss={{
+                                itemPress: false,
+                            }}
+                        >
+                            <MenuHandler>
+                                <Button>Columns</Button>
+                            </MenuHandler>
+                            <MenuList className="max-h-96">
+                                {columns.map((col) => ({
+                                    key: col.key,
+                                    name: col.name,
+                                    checked: true,
+                                    onChange: () => {
+                                        console.log("changed");
+                                    },
+                                })).map((col) => (
+                                    <MenuItem key={col.key} className="p-0">
+                                        <label
+                                            htmlFor="item-1"
+                                            className="flex cursor-pointer items-center gap-2 p-2"
+                                        >
+                                            <Checkbox
+                                                crossOrigin={undefined}
+                                                ripple={false}
+                                                id={col.key}
+                                                checked={currentColumns.some((val) => val.key === col.key)}
+                                                containerProps={{ className: "p-0" }}
+                                                className="hover:before:content-none"
+                                                onChange={() => {columnCheckboxHandler(col.key)}}
+                                            />
+                                            {col.name}
+                                        </label>
+                                    </MenuItem>
+                                ))
+                                }
+                            </MenuList>
+                        </Menu>
                         <Button className="flex items-center gap-3" size="sm">
-                            <FaPlus strokeWidth={2} className="h-4 w-4" /> Download
+                            <FaFileDownload strokeWidth={2} className="h-4 w-4" /> Export
                         </Button>
+                    </div>
+                    <div className="w-72">
+                        <Select label="Number of Rows" value={(parseInt(((perPage+9)/10).toString())*10).toString()} onChange={(e) => {
+                            if(e === undefined) return;
+                            setClaimsPerPage(parseInt(e));
+                        }}>
+                            <Option value={"10"}>10</Option>
+                            <Option value={"20"}>20</Option>
+                            <Option value={"30"}>30</Option>
+                            <Option value={"40"}>40</Option>
+                            <Option value={"50"}>50</Option>
+                        </Select>
                     </div>
                 </div>
                 <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-                    <Tabs value="all" className="w-full md:w-max">
+                    <Tabs value="all" className="w-full">
                         <TabsHeader>
                             {TABS.map(({ label, value }) => (
                                 <Tab key={value} value={value} onClick={() => setView(value)}>

@@ -55,6 +55,7 @@ export function AxnWorklist() {
     const user = Cookies.get("credentials")?.split("|")[1] || "";
     const claimnumber = useAppSelector(state => state.tableRowReducer.id);
     const userConfig = useGetUserConfigByUserIdQuery(user);
+    console.log("User Config:", userConfig);
     const claim = useGetAxnReportTypesQuery(claimnumber)
     const {data, error, isLoading, isFetching} = useGetAxnClaimsQuery(owner)
     const [open, setOpen] = useState(false);
@@ -233,7 +234,6 @@ export function AxnWorklist() {
     };
     return (
         <div className={"flex flex-col space-y-4"}>
-            <button>Show/Hide Columns</button>
             {data
                 ?
                 <>
