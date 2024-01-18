@@ -1,36 +1,6 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-
-interface OrganizationTree {
-    id: string;
-    ldapId: string;
-    name: string;
-    businessCategory: number;
-    childOrganizations?: OrganizationTree[];
-    orgId: string;
-    oePk: string;
-    country: string;
-    orgDisabled: string;
-    testData: string;
-    axnExpertEcOutage: string;
-    parOrgId: string;
-    has_novo_compliance: string;
-}
-export interface FlattenOrganization{
-    organizationTree:OrganizationTree;
-    depth:number;
-}
-
-const flatten =( org:OrganizationTree, depth:number = 0) => {
-    let descendants:FlattenOrganization[] = [{organizationTree:org, depth}];
-    if(org.childOrganizations && org.childOrganizations.length > 0){
-        org.childOrganizations.forEach(child => {
-            descendants = descendants.concat(flatten(child, depth + 1));
-        });
-    }
-    return descendants;
-}
+import { OrganizationTree, FlattenOrganization, flatten} from '@/models';
 
 // Define a service using a base URL and expected endpoints
 export const organizationApi = createApi({

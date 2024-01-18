@@ -1,50 +1,5 @@
 import {createApi,fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
-interface IVersionedEntity {
-    entityId: string;
-}
-
-interface ICondition {
-    hasDamageFieldsInTree: boolean;
-    args: any[];
-    CheckAsync(predicateService: any, variance: any, args: any[], estimate: any, damageLine: any, thresholds: any): Promise<boolean>;
-}
-
-interface PreconditionAssignments {
-    ruleCode: string;
-    violated: boolean;
-}
-
-interface GroupAssignment {
-    groupId: string;
-    ruleIds: string[];
-}
-
-export interface Group {
-    entityId: string;
-    name: string;
-    owner: string;
-    ruleCode?: string;
-    condition?: ICondition;
-    archived?: boolean;
-    activated?: boolean;
-    lossRelatedDamage?: boolean;
-    relatedPriorDamage?: boolean;
-    unrelatedPriorDamage?: boolean;
-    description: string;
-    severity?: number;
-    triggerReview?: boolean;
-    triggerAlert?: boolean;
-    alertEmail?: string;
-    critical?: boolean;
-    preconditionAssignments?: PreconditionAssignments[];
-    minimumViolations?: number | null;
-    createdOn: Date;
-    assignedRuleIds: string[];
-    groupAssignments: GroupAssignment[];
-    violationMessage?: string;
-}
-
 export const groupApi = createApi({
     reducerPath: 'groupApi',
     baseQuery: fetchBaseQuery({

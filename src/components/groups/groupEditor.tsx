@@ -10,18 +10,19 @@ import {
 } from '@material-tailwind/react';
 import TabsComponent from '@/components/tabs';
 import Table from '@/components/table';
+import {FlattenOrganization} from '@/models';
 import { Rule, useGetRulesByOwnerQuery } from '@/redux/services/ruleApi';
-import { FlattenOrganization, useGetOrganizationTreeQuery } from '@/redux/services/organizationApi';
+import { useGetOrganizationTreeQuery } from '@/redux/services/organizationApi';
 import { useState } from 'react';
-import { useForm } from '@/hooks';
 import { useGetGroupByIdQuery } from '@/redux/services/groupApi';
+import { useGroup } from '@/hooks/useGroup';
 
 const GroupEditor = ({handleOpen,owner,open,idGroup}:{handleOpen:any,owner:string,open:boolean, idGroup:string}) => {
     const [selectedRules, setSelectedRules] = useState<Record<string, boolean>>({});
     const { data:rules } = useGetRulesByOwnerQuery(owner)
-    const organizationTree = useGetOrganizationTreeQuery(owner);
-    const {groupAssignments, handleInputChange, toggleElementList} = useForm({groupAssignments: []},() =>{});
+    const { data:organizationTree } = useGetOrganizationTreeQuery(owner);
     const {data:group} = useGetGroupByIdQuery(idGroup) ?? {data: { groupAssignments :[]} };
+    const {isEnterprise,isPartner,setPartner,setEnterprise} = useGroup(group);
     return (
         <Dialog open={open} handler={handleOpen} size={"xl"}>
             <DialogHeader>
@@ -48,7 +49,6 @@ const GroupEditor = ({handleOpen,owner,open,idGroup}:{handleOpen:any,owner:strin
                                                     name={"assignedRuleIds"}
                                                     value={row.ruleCode}
                                                     checked={selectedRules[row.ruleCode] || false}
-                                                    onChange={toggleElementList}
                                                     crossOrigin={undefined}
                                                     className="h-5 w-5 rounded-full border-gray-900/20 bg-gray-900/10 transition-all hover:scale-105 hover:before:opacity-0"
                                                 />
@@ -63,27 +63,29 @@ const GroupEditor = ({handleOpen,owner,open,idGroup}:{handleOpen:any,owner:strin
                                 />
                             </> },
                         { id: 3, label: "Organizations", value:"Organization", content: <>
-                                <Table data={organizationTree.data as FlattenOrganization[]}
+                                <Table data={organizationTree || []}
                                        customColumns={[
                                            {key: "organizationTree", name: "Name", render: (row: FlattenOrganization) => (
                                                    <span>{row.organizationTree.name}</span>
                                                )},
                                            {key: "Xpert Partner", name: "Xpert Partner", render: (row: FlattenOrganization) => (
                                                    <Checkbox
-                                                       checked={null || false}
+                                                       // checked={group && group.groupAssignments.includes({officeId: row.organizationTree.ldapId, assignmentType: 2})}
+                                                       checked={isPartner(row.organizationTree) || false}
                                                        name={"groupAssignments"}
-                                                       value={JSON.stringify({officeId: row.organizationTree.ldapId, assigmentType: 1})}
-                                                       onChange={toggleElementList}
+                                                       value={JSON.stringify({officeId: row.organizationTree.ldapId, assigmentType: 2})}
+                                                       onChange={({target}) => setPartner(target.checked,row.organizationTree)}
                                                        crossOrigin={undefined}
                                                        className="h-5 w-5 rounded-full border-gray-900/20 bg-gray-900/10 transition-all hover:scale-105 hover:before:opacity-0"
                                                    />
                                                )},
                                            {key: "Xpert Enterprise", name: "Xpert Enterprise", render: (row: FlattenOrganization) => (
                                                    <Checkbox
-                                                       checked={null?? false}
+                                                       // checked={group && group.groupAssignments.includes({officeId: row.organizationTree.ldapId, assignmentType: 2})}
+                                                       checked={isEnterprise(row.organizationTree) || false}
                                                        name={"groupAssignments"}
-                                                       value={JSON.stringify({officeId: row.organizationTree.ldapId, assigmentType: 2})}
-                                                       onChange={toggleElementList}
+                                                       value={JSON.stringify({officeId: row.organizationTree.ldapId, assignmentType: 1})}
+                                                       onChange={({target}) => setEnterprise(target.checked,row.organizationTree)}
                                                        crossOrigin={undefined}
                                                        className="h-5 w-5 rounded-full border-gray-900/20 bg-gray-900/10 transition-all hover:scale-105 hover:before:opacity-0"
                                                    />
