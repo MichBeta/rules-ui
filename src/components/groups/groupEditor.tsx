@@ -22,7 +22,7 @@ const GroupEditor = ({handleOpen,owner,open,idGroup}:{handleOpen:any,owner:strin
     const { data:rules } = useGetRulesByOwnerQuery(owner)
     const { data:organizationTree } = useGetOrganizationTreeQuery(owner);
     const {data:group} = useGetGroupByIdQuery(idGroup) ?? {data: { groupAssignments :[]} };
-    const {isEnterprise,isPartner,setPartner,setEnterprise} = useGroup(group);
+    const {isEnterprise,isPartner,setPartner,setEnterprise,toggleRule,isRuleAssigned} = useGroup(group);
     return (
         <Dialog open={open} handler={handleOpen} size={"xl"}>
             <DialogHeader>
@@ -48,7 +48,8 @@ const GroupEditor = ({handleOpen,owner,open,idGroup}:{handleOpen:any,owner:strin
                                                 <Checkbox
                                                     name={"assignedRuleIds"}
                                                     value={row.ruleCode}
-                                                    checked={selectedRules[row.ruleCode] || false}
+                                                    checked={isRuleAssigned(row.entityId) || false}
+                                                    onChange={() => toggleRule(row.entityId)}
                                                     crossOrigin={undefined}
                                                     className="h-5 w-5 rounded-full border-gray-900/20 bg-gray-900/10 transition-all hover:scale-105 hover:before:opacity-0"
                                                 />

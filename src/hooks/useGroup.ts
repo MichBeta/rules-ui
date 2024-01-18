@@ -11,7 +11,7 @@ const initialGroup:Group = {
     owner: ''
 }
 export const useGroup = (group:Group= initialGroup) => {
-    const {groupAssignments, removeElementListByIndex, addElementList} = useForm(group);
+    const {groupAssignments,assignedRuleIds, removeElementListByIndex, addElementList,removeElementList} = useForm(group);
     const isEnterprise =(flatOrg:OrganizationTree): boolean =>{
         return !!(getAssignmentType(flatOrg,AssignmentType.Enterprise) & AssignmentType.Enterprise);
     }
@@ -91,5 +91,18 @@ export const useGroup = (group:Group= initialGroup) => {
 
     }
 
-    return {isEnterprise,setEnterprise,isPartner,setPartner,...group}
+    const toggleRule = (entityId:string) => {
+        let index = assignedRuleIds.findIndex(id => id == entityId);
+        if (index == -1) {
+            addElementList({name:"assignedRuleIds",value:entityId});
+        } else {
+            removeElementList({name:"assignedRuleIds",value:entityId});
+        }
+    }
+
+    const isRuleAssigned = (entityId:string) => {
+        return assignedRuleIds.findIndex(id => id == entityId) != -1;
+    }
+
+    return {isEnterprise,setEnterprise,isPartner,setPartner,toggleRule,isRuleAssigned,...group}
 }
