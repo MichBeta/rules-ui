@@ -6,7 +6,7 @@ import {metadata} from "@/data/metadata";
 import {MetaData, Field, CompareOperator, FieldValue} from "@/models/metadata";
 
 
-export function ClaimFields() {
+export  function ClaimFields() {
     const { data, error, isLoading, isFetching } = useGetClaimFieldsQuery(null);
     const [categories, setCategories] = useState<string[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>('');

@@ -11,22 +11,26 @@ import {
     Checkbox, DialogFooter, Dialog
 } from "@material-tailwind/react";
 import Cookies from "js-cookie";
-import Image from "next/image";
-import TabsComponent from "@/components/tabs";
 import {useState} from "react";
+import {metadata} from "@/data/metadata";
+import { TableRules } from "./Sections/tableRules"
 
 export function Rules() {
     const owner = Cookies.get("credentials")?.split("|")[2] || "";
     const {data, error, isLoading, isFetching} = useGetRulesByOwnerQuery(Cookies.get("credentials")?.split("|")[2] || "")
 
+    const dataForField = metadata.map( categories => categories.code); // use in case we can filter the categories
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
         setOpen(!open)
     };
+
+
+    console.log(data)
     if (isLoading) return (
         <div className={"flex flex-col space-y-4 items-center justify-center h-screen"}>
-            <Spinner className="h-16 w-16 text-gray-900/50" />;
+            <Spinner className="h-16 w-16 text-gray-900/50"/>;
         </div>
     )
     if (error) return <div>No rules found</div>
@@ -43,6 +47,7 @@ export function Rules() {
                     </div>
                     <Table
                         data={data}
+
                         columns={[
                             {key: "name", name: "Rule Description"},
                             {key: "ruleCode", name: "Rule Code"},
@@ -58,22 +63,10 @@ export function Rules() {
                         </DialogHeader>
                         <DialogBody>
                             <div className="mb-4 flex flex-col gap-6">
-                                <TabsComponent data={[
-                                    { id: 1, label: "Description", value:"description", content: <>
-                                            <Input size="lg" label="Code" crossOrigin={undefined} type="text" required={true}/>
-                                            <Textarea
-                                                size={"lg"}
-                                                label={"Description"}
-                                                required={true}
-                                            />
-                                        </> },
-                                    { id: 2, label: "Groups", value:"groups", content: <>
-                                        </> },
-                                    { id: 3, label: "Summary", value:"summary", content: <></> },
-                                ]}/>
+                               <TableRules />
                             </div>
                         </DialogBody>
-                        <DialogFooter>
+                        <DialogFooter className="grid grid-cols-2 grid-gap-x-9">
                             <Button color="blue" type={"submit"} ripple={true}>
                                 Save
                             </Button>

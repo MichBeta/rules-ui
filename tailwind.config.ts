@@ -15,7 +15,7 @@ const config: object = withMT({
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       fontFamily: {
-        'stolzl': ['Stolzl Book', 'sans-serif'],
+        'stolzl': ['Stolzl Book', 'sans-serif','helvetica'],
       },
     },
   },

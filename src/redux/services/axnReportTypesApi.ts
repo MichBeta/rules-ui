@@ -12,4 +12,4 @@ export const axnReportTypesApi = createApi({
     }),
 })
 
-export const { useGetAxnReportTypesQuery } = axnReportTypesApi;
+export const {  useGetAxnReportTypesQuery } = axnReportTypesApi;
