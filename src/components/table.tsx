@@ -18,7 +18,7 @@ interface TableProps {
     columnID?: string;
 }
 
-const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns , title, perPage,actions,columnID}) => {
+export const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns , title, perPage,actions,columnID}) => {
     const dispatch = useAppDispatch();
     const [currentPage, setCurrentPage] = useState(1);
     const [currentData, setCurrentData] = useState(data.slice(0, perPage));
@@ -61,9 +61,9 @@ const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns 
                         </div>
                     </CardHeader>
                     : null}
-                <table className="h-full w-full">
+                <table className="h-full w-full" key={currentPage}>
                     <thead>
-                    <tr>
+                    <tr >
                         {customColumns ? customColumns.map((head) => (
                             <th
                                 key={head.key}
