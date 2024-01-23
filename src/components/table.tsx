@@ -61,9 +61,9 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
                         </div>
                     </CardHeader>
                     : null}
-                <table className="h-full w-full">
+                <table className="h-full w-full" key={currentPage}>
                     <thead>
-                    <tr>
+                    <tr >
                         {customColumns ? customColumns.map((head) => (
                             <th
                                 key={head.key}

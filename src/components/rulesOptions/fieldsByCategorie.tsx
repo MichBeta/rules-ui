@@ -45,9 +45,14 @@ export function FieldsByCategorie({ fieldToMatch = "Select" }) {
                 <div>
                     <br />
                     <div className="grid grid-cols-3">
-                        {options &&
+                        {
                             options.map(
-                                (modelT) =>( <Button color="blue" className="bg-blue-800 text-white mr-4 border-1 rounded-full py-3" id={"btnOpt"} onClick={ ()=> estType(modelT)}>{modelT}</Button>)
+                                (modelT, index) =>( 
+                                <Button color="blue" 
+                                className="bg-blue-800 text-white mr-4 border-1 rounded-full py-3" 
+                                id={"btnOpt"} 
+                                onClick={ ()=> estType(modelT)} key={index}
+                                >{modelT}</Button>)
                             )
                         }
                     </div>
