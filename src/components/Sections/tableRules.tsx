@@ -1,10 +1,9 @@
 import TabsComponent from "@/components/tabs";
-import { Input, Textarea } from "@material-tailwind/react";
+import { Input, Textarea, Button } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import { metadata } from '@/data/metadata'
 import { useGetClaimFieldsQuery } from "@/redux/services/claimFieldApi";
 import { Operators } from "@/components/Sections/operators";
-import { Button } from "react-bootstrap";
 import { RuleModalHook } from "../rulesOptions/ruleModal";
 
 

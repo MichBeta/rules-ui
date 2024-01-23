@@ -1,4 +1,4 @@
-import {Button} from "react-bootstrap";
+import {Button} from "@material-tailwind/react";
 
 export function Operators(){
 
