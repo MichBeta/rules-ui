@@ -25,6 +25,7 @@ import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {ClaimRow} from "@/models/claimField";
 import {claimColumnToClaimName} from "@/app/utils";
 import { Toaster, toast } from "sonner";
+import {Console} from "inspector";
 
 interface TableProps {
     data: any[];
@@ -102,34 +103,25 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
         return subset;
     };
 
-    const columnCheckboxHandler = (columnKey:string) => {
-        if (currentColumns.some((val) => val.key === columnKey)) {
-            setCurrentColumns(currentColumns.filter((val) => val.key !== columnKey));
-        }
-        else {
-            const column = columns.find((val) => val.key === columnKey);
-            if (column) {
-                setCurrentColumns([...currentColumns, column]);
+    const columnCheckboxHandler = (columnKey: string) => {
+        setCurrentColumns((prevColumns) => {
+            let newColumns;
+            if (prevColumns.some((val) => val.key === columnKey)) {
+                newColumns = prevColumns.filter((val) => val.key !== columnKey);
+            } else {
+                const columnToAdd = columns.find((val) => val.key === columnKey);
+                newColumns = columnToAdd ? [...prevColumns, columnToAdd] : prevColumns;
             }
-        }
-        let objCopy: any[] = [];
-        let columnsCopy: any[] = [];
-        data.map(rows => {
-            console.log(currentColumns);
-            const subset = getSubsetOfProperties(rows, currentColumns.map((val) => val.key));
-            if (columnsCopy.length === 0) {
-                // iterate subset and push keys and names to columnsCopy
-                currentColumns?.map(value => {
-                    if (Object.keys(subset).includes(value)) {
-                        columnsCopy.push({key: value, name: claimColumnToClaimName(value)});
-                    }
-                });
-
-            }
-            console.log(subset);
-            objCopy.push(subset);
+            updateCurrentData(data, newColumns);
+            return newColumns;
         });
-        setCurrentData(objCopy.slice(0, claimsPerPage));
+    };
+
+    const updateCurrentData = (allData: any[], newColumns: any[]) => {
+        let newData = allData.map(row => {
+            return getSubsetOfProperties(row, newColumns.map(col => col.key));
+        });
+        setCurrentData(newData.slice(0, claimsPerPage));
     }
 
 
