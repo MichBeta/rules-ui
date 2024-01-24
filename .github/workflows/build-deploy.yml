@@ -1,0 +1,101 @@
+name: build-deploy
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - ".github/**"
+      - "ci/**"
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - ".github/**"
+      - "ci/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16' # Asegúrate de usar la versión de Node.js que se ajuste a tu proyecto
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Next.js App
+        run: npm run build
+
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.DOCKER_URL }}
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker Build and Push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./ci/Dockerfile
+          push: true
+          tags: ${{ env.DOCKER_URL }}/docker/rms/estimating/rules-ui:${{ github.sha }}
+
+  deploy-dev:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest' # Usa la versión de kubectl que se ajuste a tus necesidades
+
+      - name: Configure Kubernetes Context
+        run: |
+          kubectl config set-cluster dev-cluster --server=${{ secrets.DEV_CLUSTER_API_SERVER }} --certificate-authority=<path-to-ca>
+          kubectl config set-credentials dev-cluster-admin --token=${{ secrets.DEV_CLUSTER_TOKEN }}
+          kubectl config set-context dev --cluster=dev-cluster --namespace=rms-dev-nvcmp --user=dev-cluster-admin
+          kubectl config use-context dev
+
+      - name: Update Kubernetes Config for Development
+        run: |
+#          Aquí puedes ejecutar comandos para actualizar tus archivos de Kubernetes
+#          Por ejemplo, actualizar la imagen en tus archivos de deployment
+#          y luego aplicar estos cambios en tu entorno de desarrollo
+
+      - name: Apply Kubernetes Config
+        run: kubectl apply -f ./path/to/your/kubernetes/configs/
+
+  deploy-qa:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest' # Asegúrate de usar la versión de kubectl que se ajuste a tus necesidades
+
+      - name: Configure Kubernetes Context
+        run: |
+          kubectl config set-cluster qae-cluster --server=${{ secrets.QAE_CLUSTER_API_SERVER }} --certificate-authority=<path-to-ca>
+          kubectl config set-credentials qae-cluster-admin --token=${{ secrets.QAE_CLUSTER_TOKEN }}
+          kubectl config set-context qae --cluster=qae-cluster --namespace=rms-qae-nvcmp --user=qae-cluster-admin
+          kubectl config use-context qae
+
+      - name: Update Kubernetes Config for QA
+        run: |
+#          Comandos similares al job deploy-dev para actualizar tus archivos de Kubernetes
+#          y aplicar estos cambios en tu entorno de QA
+
+      - name: Apply Kubernetes Config
+        run: kubectl apply -f ./path/to/your/kubernetes/configs/
