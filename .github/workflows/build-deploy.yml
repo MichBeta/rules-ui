@@ -14,88 +14,133 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    #needs: code-analysis                                        # Later we must add a 'code-analysis' job to succeed
+    runs-on: [ self-hosted, linux, x64, dotnet-6]
+    environment: DEV
+    outputs:
+      version: ${{ steps.build.outputs.version }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          node-version: '16' # Asegúrate de usar la versión de Node.js que se ajuste a tu proyecto
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build Next.js App
-        run: npm run build
-
-      - name: Docker Login
+          fetch-depth: 0
+      - name: Build                                             # Build and publish to a local folder
+        id: build
+        run: |
+          echo "BUILD_VER=$(git describe)" >> $GITHUB_ENV
+          echo BUILD_VER = $BUILD_VER
+          echo "version=$(git describe)" >> $GITHUB_OUTPUT
+          echo version   = $(git describe)
+          COMMIT_HASH=$(git rev-parse HEAD)
+          COMMIT_MESSAGE=$(git log --format=%B -n 1)
+          AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
+          AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+          echo "BUILD_VER = $BUILD_VER"
+          echo "Commit Hash = $COMMIT_HASH"
+          echo "Commit Message = $COMMIT_MESSAGE"
+          echo "Commit Authort = $AUTHOR_NAME <$AUTHOR_EMAIL>"
+          echo "Tag Name: ${{ env.GITHUB_REF }}"
+          echo "Version: ${{ needs.build.outputs.version }}"
+      - name: Docker login
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.DOCKER_URL }}
+          registry: ${{ vars.DOCKER_URL }}
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Docker Build and Push
+      - name: Docker build                                      # Build and push a docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./
           file: ./ci/Dockerfile
           push: true
-          tags: ${{ env.DOCKER_URL }}/docker/rms/estimating/rules-ui:${{ github.sha }}
-
+          tags: ${{ vars.DOCKER_URL }}/docker/rms/nvcmp/new-rules-ui:${{ env.BUILD_VER }}
+  ###### DEV SPACE #######
   deploy-dev:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, base]
+    environment: DEV
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Set up Kubectl
-        uses: azure/setup-kubectl@v1
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          version: 'latest' # Usa la versión de kubectl que se ajuste a tus necesidades
-
-      - name: Configure Kubernetes Context
+          fetch-depth: 0
+      - name: Checkout k8s-deploy                               # Check out 'k82-deploy' custom action repo
+        uses: actions/checkout@v3
+        with:
+          repository: Claims-NA/k8s-deploy
+          ref: "1.0"
+          path: ./.github/actions/k8s-deploy
+          token: ${{ secrets.ACTIONS_TOKEN }}
+      - name: Update version                                    # Update to the new version in k8s deployment yaml
         run: |
-          kubectl config set-cluster dev-cluster --server=${{ secrets.DEV_CLUSTER_API_SERVER }} --certificate-authority=<path-to-ca>
-          kubectl config set-credentials dev-cluster-admin --token=${{ secrets.DEV_CLUSTER_TOKEN }}
-          kubectl config set-context dev --cluster=dev-cluster --namespace=rms-dev-nvcmp --user=dev-cluster-admin
-          kubectl config use-context dev
-
-      - name: Update Kubernetes Config for Development
-        run: |
-#          Aquí puedes ejecutar comandos para actualizar tus archivos de Kubernetes
-#          Por ejemplo, actualizar la imagen en tus archivos de deployment
-#          y luego aplicar estos cambios en tu entorno de desarrollo
-
-      - name: Apply Kubernetes Config
-        run: kubectl apply -f ./path/to/your/kubernetes/configs/
-
+          DOCKER_TAG=${{ needs.build.outputs.version }}
+          echo tag = $DOCKER_TAG
+          sed -i "s/:VERSION/:$DOCKER_TAG/" ./ci/k8s/dev/deployment.yaml
+          cat ./ci/k8s/dev/deployment.yaml | grep "image:"
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ vars.DOCKER_URL }}
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Deploy                                            # Deploy to Tanzu k8s
+        uses: ./.github/actions/k8s-deploy
+        with:
+          api-server-uri: ${{ secrets.DEV_KUBE_API }}
+          cluster-ca: ${{ secrets.DEV_KUBE_CA }}
+          token: ${{ secrets.DEV_KUBE_TOKEN }}
+          namespace: rms-dev-nvcmp
+          file: ci/k8s/dev
+  ###### QA SPACE #######
   deploy-qa:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, linux, x64, base ]
+    outputs:
+      version: ${{ steps.build.outputs.version }}
+    environment: QA
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Set up Kubectl
-        uses: azure/setup-kubectl@v1
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          version: 'latest' # Asegúrate de usar la versión de kubectl que se ajuste a tus necesidades
-
-      - name: Configure Kubernetes Context
+          fetch-depth: 0
+      - name: Checkout k8s-deploy                               # Check out 'k82-deploy' custom action repo
+        uses: actions/checkout@v3
+        with:
+          repository: Claims-NA/k8s-deploy
+          ref: "1.0"
+          path: ./.github/actions/k8s-deploy
+          token: ${{ secrets.ACTIONS_TOKEN }}
+      - name: Update version                                    # Update to the new version in k8s deployment yaml changue in this block
         run: |
-          kubectl config set-cluster qae-cluster --server=${{ secrets.QAE_CLUSTER_API_SERVER }} --certificate-authority=<path-to-ca>
-          kubectl config set-credentials qae-cluster-admin --token=${{ secrets.QAE_CLUSTER_TOKEN }}
-          kubectl config set-context qae --cluster=qae-cluster --namespace=rms-qae-nvcmp --user=qae-cluster-admin
-          kubectl config use-context qae
-
-      - name: Update Kubernetes Config for QA
-        run: |
-#          Comandos similares al job deploy-dev para actualizar tus archivos de Kubernetes
-#          y aplicar estos cambios en tu entorno de QA
-
-      - name: Apply Kubernetes Config
-        run: kubectl apply -f ./path/to/your/kubernetes/configs/
+          DOCKER_TAG=${{ needs.build.outputs.version }}
+          echo "Version: ${{ needs.build.outputs.version }}"
+          echo "BUILD_VER=$(git describe)" >> $GITHUB_ENV
+          echo BUILD_VER = $BUILD_VER
+          echo "version=$(git describe)" >> $GITHUB_OUTPUT
+          echo version   = $(git describe)
+          COMMIT_HASH=$(git rev-parse HEAD)
+          COMMIT_MESSAGE=$(git log --format=%B -n 1)
+          AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
+          AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+          echo "BUILD_VER = $BUILD_VER"
+          echo "Commit Hash = $COMMIT_HASH"
+          echo "Commit Message = $COMMIT_MESSAGE"
+          echo "Commit Author = $AUTHOR_NAME <$AUTHOR_EMAIL>"
+          echo "Version: ${{ needs.build.outputs.version }}"
+          echo tag = $DOCKER_TAG
+          sed -i "s/:VERSION/:$DOCKER_TAG/" ./ci/k8s/qae/deployment.yaml
+          cat ./ci/k8s/qae/deployment.yaml | grep "image:"
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ vars.DOCKER_URL }}
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Deploy                                            # Deploy to Tanzu k8s
+        uses: ./.github/actions/k8s-deploy
+        with:
+          api-server-uri: ${{ secrets.QAE_KUBE_API }}
+          cluster-ca: ${{ secrets.QAE_KUBE_CA }}
+          token: ${{ secrets.QAE_KUBE_TOKEN }}
+          namespace: rms-qae-nvcmp
+          file: ci/k8s/qae
