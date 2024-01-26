@@ -3,15 +3,15 @@ kind: Service
 metadata:
   creationTimestamp: null
   labels:
-    service: fees-web
-  name: fees-web
+    service: solera-rms-compliance-rules-newui
+  name: solera-rms-compliance-rules-ui
 spec:
   ports:
     - name: "8080"
       port: 8080
       targetPort: 8080
   selector:
-    service: fees-web
+    service: solera-rms-compliance-rules-newui
   type: ClusterIP
 status:
   loadBalancer: {}

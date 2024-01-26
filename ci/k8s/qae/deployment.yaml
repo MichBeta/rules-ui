@@ -3,13 +3,13 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    service: solera-rms-compliance-new-rules-ui
-  name: solera-rms-compliance-new-rules-ui
+    service: solera-rms-compliance-rules-newui
+  name: solera-rms-compliance-rules-newui
 spec:
   replicas: 2
   selector:
     matchLabels:
-      service: new-rules-ui
+      service: rules-newui
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -20,7 +20,7 @@ spec:
       creationTimestamp: null
       labels:
         network/default: "true"
-        service: solera-rms-compliance-new-rules-ui
+        service: solera-rms-compliance-rules-newui
         solera-vertical: rms
         solera-env: qa
         solera-org: cmp
@@ -55,7 +55,7 @@ spec:
                 secretKeyRef:
                   key: services
                   name: rulesuivcap
-          image: feeds.axadmin.net/docker/rms/nvcmp/new-rules-ui:VERSION
+          image: feeds.axadmin.net/docker/rms/nvcmp/rules-newui:VERSION
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 10
@@ -65,7 +65,7 @@ spec:
             tcpSocket:
               port: 8080
             timeoutSeconds: 180
-          name: solera-rms-compliance-new-rules-ui
+          name: solera-rms-compliance-rules-newui
           ports:
             - containerPort: 8080
           resources:

@@ -1,0 +1,50 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: feeds.axadmin.net/docker/node
+    username: ((proget-user))
+    password: ((proget-password))
+
+inputs:
+  - name: source-git
+outputs:
+  - name: artifact
+  - name: versions
+  - name: source-git
+run:
+  dir: source-git
+  path: bash
+  args:
+    - -exc
+    - |
+      # Format the version
+      version=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
+      echo $version > ./ci/version.txt
+
+      # Define directories
+      repo_dir=${PWD}
+      parentdir="$(dirname "${repo_dir}")"
+      output_directory=${parentdir}/artifact
+      version_directory=${parentdir}/versions
+
+      # Create the output directories
+      mkdir -p ${output_directory}
+      mkdir -p ${version_directory}
+
+      # Copy version file to the versions output
+      cp ./ci/version.txt ${version_directory}/
+
+      # Build Docker image
+      docker build -t your-docker-registry/your-image-name:${version} .
+
+      # Push Docker image
+      docker push your-docker-registry/your-image-name:${version}
+
+      # Optionally: tag the image as 'latest' and push
+      docker tag your-docker-registry/your-image-name:${version} your-docker-registry/your-image-name:latest
+      docker push your-docker-registry/your-image-name:latest
+
+      # Copy necessary files to the artifact output
+      cp -r . ${output_directory}/
