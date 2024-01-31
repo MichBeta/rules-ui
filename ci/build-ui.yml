@@ -37,14 +37,14 @@ run:
       cp ./ci/version.txt ${version_directory}/
 
       # Build Docker image
-      docker build -t your-docker-registry/your-image-name:${version} .
+      docker build -t feeds.axadmin.net/docker/rms/nvcmp/rules-newui:${version} .
 
       # Push Docker image
-      docker push your-docker-registry/your-image-name:${version}
+      docker push feeds.axadmin.net/docker/rms/nvcmp/rules-newui:${version}
 
       # Optionally: tag the image as 'latest' and push
-      docker tag your-docker-registry/your-image-name:${version} your-docker-registry/your-image-name:latest
-      docker push your-docker-registry/your-image-name:latest
+      docker tag feeds.axadmin.net/docker/rms/nvcmp/rules-newui:${version} feeds.axadmin.net/docker/rms/nvcmp/rules-newui:latest
+      docker push feeds.axadmin.net/docker/rms/nvcmp/rules-newui:latest
 
       # Copy necessary files to the artifact output
       cp -r . ${output_directory}/
