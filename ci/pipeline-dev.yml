@@ -1,13 +1,30 @@
 groups:
   - name: dev
     jobs:
-      - build-rules-ui
+      - display-config
+      - build-rules-newui
       - deploy-dev
   - name: qa
     jobs:
       - deploy-qa
 jobs:
-  - name: build-rules-ui
+  - name: display-config
+    plan:
+      - task: print-git-uri
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: { repository: busybox }
+          params:
+            GIT_URI: git@bitbucket.org:SoleraNA/rules-newui.git
+          run:
+            path: sh
+            args:
+              - -c
+              - |
+                echo "The GIT_URI is $GIT_URI"
+  - name: build-rules-newui
     plan:
       - in_parallel:
           - get: source-git
@@ -19,22 +36,22 @@ jobs:
           proget_password: ((proget-password))
           proget_username: ((proget-user))
           project_name: ((project_name))
-        task: build-rules-ui
+        task: build-rules-newui
       - params:
           build: ./
           dockerfile: source-git/ci/docker/rulesui-dockerfile
           tag_as_latest: true
           tag_file: source-git/ci/version.txt
-        put: docker-nvcmp-rules-ui
+        put: docker-nvcmp-rules-newui
   - name: deploy-dev
     plan:
-      - get: docker-nvcmp-rules-ui
+      - get: docker-nvcmp-rules-newui
       - get: source-git
         passed:
-          - build-rules-ui
+          - build-rules-newui
         trigger: true
       - task: prepare-k8s
-        image: docker-nvcmp-rules-ui
+        image: docker-nvcmp-rules-newui
         config:
           platform: linux
           inputs:
@@ -59,13 +76,13 @@ jobs:
           path: deployables
   - name: deploy-qa
     plan:
-      - get: docker-nvcmp-rules-ui
+      - get: docker-nvcmp-rules-newui
       - get: source-git
         passed:
-          - build-rules-ui
+          - build-rules-newui
         trigger: false
       - task: prepare-k8s
-        image: docker-nvcmp-rules-ui
+        image: docker-nvcmp-rules-newui
         config:
           platform: linux
           inputs:
@@ -97,12 +114,12 @@ resource_types:
       tag: latest
       username: ((proget-user))
 resources:
-  - name: docker-nvcmp-rules-ui
+  - name: docker-nvcmp-rules-newui
     type: docker-image
     icon: docker
     source:
       password: ((proget-password))
-      repository: feeds.axadmin.net/docker/rms/nvcmp/rules-ui
+      repository: feeds.axadmin.net/docker/rms/nvcmp/rules-newui
       tag: latest
       username: ((proget-user))
   - name: kubectl-deploy-dev
@@ -127,4 +144,4 @@ resources:
     source:
       branch: tanzu-dev
       private_key: ((novoCompliance.private-repo-key-ui))
-      uri: ((git-uri))
+      uri: git@bitbucket.org:SoleraNA/rules-newui.git
