@@ -1,7 +1,7 @@
 # Etapa de construcción
 # --------------------
 # Selecciona una imagen base con Node.js
-FROM feeds.axadmin.net/docker/node
+FROM feeds.axadmin.net/docker/node as build
 
 # Establece el directorio de trabajo en el contenedor
 WORKDIR /app
@@ -25,6 +25,7 @@ FROM node:14-slim
 WORKDIR /app
 
 # Copia el código fuente construido y los módulos de Node.js necesarios
+# desde la etapa 'build'
 COPY --from=build /app/build ./build
 COPY --from=build /app/node_modules ./node_modules
 
