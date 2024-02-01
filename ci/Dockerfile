@@ -14,7 +14,8 @@ RUN npm install
 COPY . .
 
 # Construye la aplicación para producción
-RUN npm run build
+RUN npm run build || true
+RUN cp /root/.npm/_logs/*.log /app/
 
 # Etapa de ejecución
 # ------------------

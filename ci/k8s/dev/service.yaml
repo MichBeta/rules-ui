@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     service: solera-rms-compliance-rules-newui
-  name: solera-rms-compliance-rules-ui
+  name: solera-rms-compliance-rules-newui
 spec:
   ports:
     - name: "8080"
