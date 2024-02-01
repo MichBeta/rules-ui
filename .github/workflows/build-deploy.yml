@@ -14,27 +14,6 @@ on:
       - "ci/**"
 
 jobs:
-  tag-and-release:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Configure Git
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-
-      - name: Create and Push Tag
-        run: |
-          VERSION=${{ needs.build.outputs.version }}
-          TAG="v${VERSION}"
-          git tag $TAG
-          git push origin $TAG
-          echo "Tag $TAG created and pushed successfully."
   build:
     #needs: code-analysis                                        # Later we must add a 'code-analysis' job to succeed
     runs-on: [ self-hosted, linux, x64, dotnet-6]
@@ -49,11 +28,10 @@ jobs:
       - name: Build                                             # Build and publish to a local folder
         id: build
         run: |
-          echo $(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
-          echo "BUILD_VER=$(git describe)" >> $GITHUB_ENV
+          echo "BUILD_VER=$(git describe --tags)" >> $GITHUB_ENV
           echo BUILD_VER = $BUILD_VER
-          echo "version=$(git describe)" >> $GITHUB_OUTPUT
-          echo version   = $(git describe)
+          echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
+          echo version   = $(git describe --tags)
           COMMIT_HASH=$(git rev-parse HEAD)
           COMMIT_MESSAGE=$(git log --format=%B -n 1)
           AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
