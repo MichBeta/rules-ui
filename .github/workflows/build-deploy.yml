@@ -14,6 +14,28 @@ on:
       - "ci/**"
 
 jobs:
+  tag-and-release:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+
+      - name: Create and Push Tag
+        run: |
+          VERSION=${{ needs.build.outputs.version }}
+          TAG="v${VERSION}"
+          git tag $TAG
+          git push origin $TAG
+          echo "Tag $TAG created and pushed successfully."
   build:
     #needs: code-analysis                                        # Later we must add a 'code-analysis' job to succeed
     runs-on: [ self-hosted, linux, x64, dotnet-6]

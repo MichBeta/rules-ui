@@ -17,13 +17,17 @@ jobs:
             type: registry-image
             source: { repository: busybox }
           params:
-            GIT_URI: git@bitbucket.org:SoleraNA/rules-newui.git
+            GIT_URI: ((git-uri))
+            PROJECT_KEY: ((project_key))
+            PROJECT_NAME: ((project_name))
           run:
             path: sh
             args:
               - -c
               - |
                 echo "The GIT_URI is $GIT_URI"
+                echo "The PROJECT_KEY is $PROJECT_KEY"
+                echo "The PROJECT_NAME is $PROJECT_NAME"
   - name: build-rules-newui
     plan:
       - in_parallel:
