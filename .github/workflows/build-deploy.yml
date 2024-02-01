@@ -15,7 +15,6 @@ on:
 
 jobs:
   tag-and-release:
-    needs: build
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
@@ -50,6 +49,7 @@ jobs:
       - name: Build                                             # Build and publish to a local folder
         id: build
         run: |
+          echo $(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
           echo "BUILD_VER=$(git describe)" >> $GITHUB_ENV
           echo BUILD_VER = $BUILD_VER
           echo "version=$(git describe)" >> $GITHUB_OUTPUT
