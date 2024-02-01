@@ -1,0 +1,31 @@
+name: Tag on Tanzu-Dev Changes
+
+on:
+  push:
+    branches:
+      - tanzu-dev
+  pull_request:
+    branches:
+      - tanzu-dev
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+
+      - name: Generate and Push Tag
+        run: |
+          # Generate a unique tag. Example: tanzu-dev-2023-04-01-123456-abcdef
+          TAG="tanzu-dev-$(date +'%Y-%m-%d-%H%M%S')-$(git rev-parse --short HEAD)"
+          git tag $TAG
+          git push origin $TAG
+          echo "Tag $TAG created and pushed successfully."
