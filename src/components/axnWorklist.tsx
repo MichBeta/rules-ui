@@ -33,7 +33,6 @@ import {ClaimFields} from "@/components/test/claimField";
 import {Enumerations} from "@/components/test/enumeration";
 import {Validator} from "@/components/test/validator";
 import {Parts} from "@/components/test/part";
-import {AxnClaimViewer} from "@/components/test/axnClaimViewer";
 import {ClaimRow} from "@/models/claimField";
 import {FaEye, FaFilePdf} from "react-icons/fa";
 import {toast} from "sonner";
