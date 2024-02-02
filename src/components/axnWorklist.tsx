@@ -52,6 +52,7 @@ const CUSTOM_ANIMATION = {
 export function AxnWorklist() {
     const owner = Cookies.get("credentials")?.split("|")[2] || "";
     const user = Cookies.get("credentials")?.split("|")[1] || "";
+    //const [getUserConfigByUserId, { isLoadingUserConfig, isErrorUserConfig, errorUserConfig }] = useGetUserConfigByUserIdQuery(user);
     const claimnumber = useAppSelector(state => state.tableRowReducer.id);
     const userConfig = useGetUserConfigByUserIdQuery(user);
     console.log("User Config:", userConfig);
@@ -292,6 +293,7 @@ export function AxnWorklist() {
                             },
                         ]}
                         showColumns={userConfig.data?.views[view]?.columnsToShow ? userConfig.data?.views[view]?.columnsToShow as (keyof ClaimRow)[] : []}
+                        currentUserConfig={userConfig?.data as UserConfig}
                     />
                 </>
                 : null

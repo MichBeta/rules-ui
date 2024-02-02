@@ -25,7 +25,8 @@ import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {ClaimRow} from "@/models/claimField";
 import {claimColumnToClaimName} from "@/app/utils";
 import { Toaster, toast } from "sonner";
-import {Console} from "inspector";
+import UserConfig from "@/models/userConfig";
+import {useUpdateUserConfigByUserIdMutation} from "@/redux/services/userConfigApi";
 
 interface TableProps {
     data: any[];
@@ -33,14 +34,15 @@ interface TableProps {
     columns: any[];
     customColumns?: any[];
     showColumns?: Array<keyof ClaimRow>;
+    currentUserConfig: UserConfig;
     title: string;
     perPage: number;
     actions?: boolean;
     columnID?: string;
-    view?: number;
+    view: number;
     setView: (value: number) => void;
-    sortBy?: string;
-    sortAscending?: boolean;
+    sortBy: string;
+    sortAscending: boolean;
 }
 
 const TABS = [
@@ -62,7 +64,7 @@ const TABS = [
     },
 ];
 
-const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, customColumns , showColumns, title, perPage,actions,columnID, view, setView, sortBy, sortAscending}) => {
+const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, customColumns , showColumns, currentUserConfig, title, perPage,actions,columnID, view, setView, sortBy, sortAscending}) => {
     const dispatch = useAppDispatch();
     const [currentPage, setCurrentPage] = useState(1);
     const [currentData, setCurrentData] = useState(data.slice(0, perPage));
@@ -71,6 +73,9 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
     const [srtAscending, setSrtAscending] = useState(sortAscending);
     const [claimsPerPage, setClaimsPerPage] = useState(perPage);
     const totalPages = Math.ceil(data.length / claimsPerPage);
+
+    console.log("data", data)
+    console.log("currentUserConfig", currentUserConfig);
 
     const onPageChange = (page: number) => {
         setCurrentPage(page);
@@ -121,7 +126,38 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
         let newData = allData.map(row => {
             return getSubsetOfProperties(row, newColumns.map(col => col.key));
         });
+
+        console.log("currenUserConfig before update", currentUserConfig);
+        if (view !== undefined && currentUserConfig !== undefined &&
+            ((currentUserConfig.views[view].columnsToShow !== newColumns) ||
+                (currentUserConfig.views[view].numberOfItemsPerPage !== claimsPerPage) ||
+                (currentUserConfig.views[view].sortBy !== srtBy) ||
+                (currentUserConfig.views[view].sortAscending !== srtAscending))) {
+
+            currentUserConfig = {
+                ...currentUserConfig,
+                views: {
+                    ...currentUserConfig.views,
+                    [view]: {
+                        ...currentUserConfig.views[view],
+                        columnsToShow: newColumns.map(col => col.key),
+                        numberOfItemsPerPage: claimsPerPage,
+                        sortBy: srtBy,
+                        sortAscending: srtAscending
+                    }
+                }
+            } as UserConfig;
+
+            console.log("currenUserConfig after update", currentUserConfig);
+
+            dispatch(useUpdateUserConfigByUserIdMutation(currentUserConfig));
+
+
+        }
+
+
         setCurrentData(newData.slice(0, claimsPerPage));
+
     }
 
 

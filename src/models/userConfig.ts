@@ -1,10 +1,10 @@
 export default interface UserConfig {
     userSettingsId: string,
     id: string,
-    views: view[],
+    views: View[],
 }
 
-interface view {
+interface View {
     name: string,
     columnsToShow: string[],
     numberOfItemsPerPage: number,
