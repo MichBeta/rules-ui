@@ -45,7 +45,7 @@ jobs:
           build: ./
           dockerfile: source-git/ci/docker/rulesui-dockerfile
           tag_as_latest: true
-          tag_file: source-git/ci/version.txt
+          tag_file: build-output/version.txt
         put: docker-nvcmp-rules-newui
   - name: deploy-dev
     plan:

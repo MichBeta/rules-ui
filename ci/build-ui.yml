@@ -32,9 +32,10 @@ run:
       npm run build || yarn build
 
       # Copy the build output to the `build-output` directory for Dockerization
-      ls -la
       echo $version > ./.next/version.txt
+      ls -la ./.next
       cp -R ./.next ../build-output/
+      ls -la ..
 
       # (Optional) Additional steps such as linting, testing, etc.
       # npm run lint
