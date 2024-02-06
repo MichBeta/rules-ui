@@ -18,9 +18,10 @@ run:
     - -exc
     - |
       #!/bin/sh
+      # install git
+      apk add --no-cache git
       # Format the version
       version=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
-      ls -l
       # Navigate to the project directory
       cd source-git
       
@@ -31,7 +32,7 @@ run:
       npm run build || yarn build
 
       # Copy the build output to the `build-output` directory for Dockerization
-      echo $version > ./build/version.txt
+      echo $version > ./build-output/version.txt
       cp -R ./build ../build-output/
 
       # (Optional) Additional steps such as linting, testing, etc.
