@@ -22,7 +22,6 @@ run:
       # Format the version
       version=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
       echo $version > ./ci/version.txt
-      echo $version > src/assets/version.txt
 
       # Define directories
       repo_dir=${PWD}
