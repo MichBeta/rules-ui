@@ -1,39 +1,20 @@
-# Etapa de construcción
-# --------------------
-# Selecciona una imagen base con Node.js
-FROM node:14-slim as build
+# Use an official Node runtime as a parent image
+FROM node:alpine
 
-# Establece el directorio de trabajo en el contenedor
-WORKDIR /app
+# Set the working directory in the container
+WORKDIR /usr/src/app
 
-# Copia el archivo de dependencias y las instala
-COPY package.json package-lock.json ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Copia el resto del código fuente de la aplicación
+# Bundle app source
 COPY . .
 
-# Construye la aplicación para producción
-RUN npm run build || true
-RUN cp /root/.npm/_logs/*.log /app/
+# Build your Next.js app
+RUN npm run build
 
-# Etapa de ejecución
-# ------------------
-# Selecciona una imagen base más ligera para la ejecución
-FROM node:14-slim
-
-# Establece el directorio de trabajo en el contenedor
-WORKDIR /app
-
-# imprimer un arbol de directorios
-RUN ls -la /app
-
-# Copia el código fuente construido y los módulos de Node.js necesarios desde la etapa 'build'
-COPY --from=build /app/build ./build
-COPY --from=build /app/node_modules ./node_modules
-
-# Expone el puerto que la aplicación utilizará
-EXPOSE 8080
-
-# Define el comando para ejecutar la aplicación
-CMD ["node", "build/index.js"]
+# Start the Next.js app
+CMD ["npm", "start"]
