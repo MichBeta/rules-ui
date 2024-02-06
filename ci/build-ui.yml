@@ -3,7 +3,8 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: feeds.axadmin.net/docker/node
+    repository: feeds.axadmin.net/docker/library/node
+    tag: "20"
     username: ((proget-user))
     password: ((proget-password))
 
