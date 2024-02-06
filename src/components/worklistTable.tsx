@@ -25,7 +25,7 @@ import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {ClaimRow} from "@/models/claimField";
 import {claimColumnToClaimName} from "@/app/utils";
 import { Toaster, toast } from "sonner";
-import UserConfig from "@/models/userConfig";
+import UserConfig, {View} from "@/models/userConfig";
 import {useUpdateUserConfigByUserIdMutation} from "@/redux/services/userConfigApi";
 
 interface TableProps {
@@ -73,6 +73,8 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
     const [srtAscending, setSrtAscending] = useState(sortAscending);
     const [claimsPerPage, setClaimsPerPage] = useState(perPage);
     const totalPages = Math.ceil(data.length / claimsPerPage);
+
+    const [updateUserConfigByUserId] = useUpdateUserConfigByUserIdMutation();
 
     console.log("data", data)
     console.log("currentUserConfig", currentUserConfig);
@@ -134,24 +136,15 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                 (currentUserConfig.views[view].sortBy !== srtBy) ||
                 (currentUserConfig.views[view].sortAscending !== srtAscending))) {
 
-            currentUserConfig = {
-                ...currentUserConfig,
-                views: {
-                    ...currentUserConfig.views,
-                    [view]: {
-                        ...currentUserConfig.views[view],
-                        columnsToShow: newColumns.map(col => col.key),
-                        numberOfItemsPerPage: claimsPerPage,
-                        sortBy: srtBy,
-                        sortAscending: srtAscending
-                    }
-                }
-            } as UserConfig;
+            currentUserConfig = UserConfig.updateViewFromJson(currentUserConfig, new View(currentUserConfig.views[view].name, newColumns, claimsPerPage, srtBy, srtAscending));
 
             console.log("currenUserConfig after update", currentUserConfig);
 
-            dispatch(useUpdateUserConfigByUserIdMutation(currentUserConfig));
-
+            updateUserConfigByUserId(currentUserConfig).unwrap().then((data) => {
+                console.log("updateUserConfigByUserId", data);
+            }).catch((error) => {
+                console.log("updateUserConfigByUserId error", error);
+            });
 
         }
 
