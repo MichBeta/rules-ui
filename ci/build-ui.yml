@@ -32,7 +32,8 @@ run:
       npm run build || yarn build
 
       # Copy the build output to the `build-output` directory for Dockerization
-      echo $version > ./build-output/version.txt
+      ls -la
+      echo $version > ../build-output/version.txt
       cp -R ./build ../build-output/
 
       # (Optional) Additional steps such as linting, testing, etc.
