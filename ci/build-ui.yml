@@ -56,4 +56,4 @@ run:
 #      docker push feeds.axadmin.net/docker/rms/nvcmp/rules-newui:latest
 
       # Copy necessary files to the artifact output
-      cp -r . ${output_directory}/
+#      cp -r . ${output_directory}/
