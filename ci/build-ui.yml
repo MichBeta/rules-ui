@@ -10,18 +10,17 @@ image_resource:
 inputs:
   - name: source-git
 outputs:
-  - name: artifact
+  - name: build-output
   - name: versions
   - name: source-git
 run:
-  dir: source-git
   path: bash
   args:
     - -exc
     - |
       # Format the version
       version=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
-
+      ls -l
       # Navigate to the project directory
       cd source-git
       
