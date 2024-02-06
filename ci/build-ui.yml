@@ -36,7 +36,8 @@ run:
       # echo $version > ./.next/version.txt
       ls -la ./.next
       cp -R ".next/"* $output_directory
-      ls -la $output_directory
+      ls -la ${PWD}
+      ls -la ${PWD}/source-git
 
       # (Optional) Additional steps such as linting, testing, etc.
       # npm run lint
