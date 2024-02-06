@@ -37,7 +37,7 @@ run:
       # Copy version file to the versions output
       cp ./ci/version.txt ${version_directory}/
         
-      apt-get update
+#      apt-get update
       npm install
       export PATH="./node_modules/.bin/:$PATH"
       
