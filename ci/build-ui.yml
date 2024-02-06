@@ -33,8 +33,8 @@ run:
 
       # Copy the build output to the `build-output` directory for Dockerization
       ls -la
-      echo $version > ../build-output/version.txt
-      cp -R ./build ../build-output/
+      echo $version > ./.next/version.txt
+      cp -R ./.next ../build-output/
 
       # (Optional) Additional steps such as linting, testing, etc.
       # npm run lint
