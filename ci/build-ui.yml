@@ -19,7 +19,7 @@ run:
     - |
       #!/bin/sh
       # install git
-      apk add --no-cache git
+      # apk add --no-cache git
       # Format the version
       version=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
       # Navigate to the project directory
