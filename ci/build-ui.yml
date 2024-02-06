@@ -37,7 +37,6 @@ run:
       # Copy version file to the versions output
       cp ./ci/version.txt ${version_directory}/
         
-#      apt-get update
       npm install
       export PATH="./node_modules/.bin/:$PATH"
       
@@ -45,15 +44,3 @@ run:
       
       cp -R "dist/novo/"* $output_directory
       cd $output_directory
-#      # Build Docker image
-#      docker build -t feeds.axadmin.net/docker/rms/nvcmp/rules-newui:${version} .
-#
-#      # Push Docker image
-#      docker push feeds.axadmin.net/docker/rms/nvcmp/rules-newui:${version}
-#
-#      # Optionally: tag the image as 'latest' and push
-#      docker tag feeds.axadmin.net/docker/rms/nvcmp/rules-newui:${version} feeds.axadmin.net/docker/rms/nvcmp/rules-newui:latest
-#      docker push feeds.axadmin.net/docker/rms/nvcmp/rules-newui:latest
-
-      # Copy necessary files to the artifact output
-#      cp -r . ${output_directory}/
