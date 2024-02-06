@@ -22,30 +22,44 @@ jobs:
       version: ${{ steps.build.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Build                                             # Build and publish to a local folder
-        id: build
+      - name: Detect package manager
+        id: detect-package-manager
         run: |
-          echo "BUILD_VER=$(git describe --tags)" >> $GITHUB_ENV
-          echo BUILD_VER = $BUILD_VER
-          echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
-          echo version   = $(git describe --tags)
-          COMMIT_HASH=$(git rev-parse HEAD)
-          COMMIT_MESSAGE=$(git log --format=%B -n 1)
-          AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
-          AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
-          echo "BUILD_VER = $BUILD_VER"
-          echo "Commit Hash = $COMMIT_HASH"
-          echo "Commit Message = $COMMIT_MESSAGE"
-          echo "Commit Authort = $AUTHOR_NAME <$AUTHOR_EMAIL>"
-          echo "Tag Name: ${{ env.GITHUB_REF }}"
-          echo "Version: ${{ needs.build.outputs.version }}"
-          echo "Docker URL: ${{ vars.DOCKER_URL }}"
-          npm install
-          npm run build
-          ls -l
+          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
+            echo "Yarn"
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
+            echo "runner=yarn" >> $GITHUB_OUTPUT
+          elseif [ -f "${{ github.workspace }}/package.json" ]; then
+            echo "NPM"
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
+          else
+            echo "No package manager found"
+            exit 1
+          fi
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: ${{ needs.detect-package-manager.outputs.manager }}
+      - name: Restore cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', **/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', **/yarn.lock') }}-
+      - name: Install dependencies
+        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - name: Build
+        id: build
+        run: npm run build
       - name: Docker login
         uses: docker/login-action@v2
         with:
