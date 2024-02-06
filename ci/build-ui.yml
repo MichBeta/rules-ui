@@ -37,7 +37,7 @@ run:
       ls -la ./.next
       cp -R ".next/"* $output_directory
       ls -la ${PWD}
-      ls -la ${PWD}/source-git
+      ls -la ${PWD}/ci
 
       # (Optional) Additional steps such as linting, testing, etc.
       # npm run lint

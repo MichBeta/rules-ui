@@ -43,7 +43,7 @@ jobs:
         task: build-rules-newui
       - params:
           build: ./
-          dockerfile: source-git/ci/docker/rulesui-dockerfile
+          dockerfile: source-git/ci/Dockerfile
           tag_as_latest: true
           tag_as_version: true
           tag_prefix: "V"
