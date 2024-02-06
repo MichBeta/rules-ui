@@ -1,0 +1,14 @@
+pipelines:
+  branches:
+    tanzu-dev:
+      - step:
+          name: Tag on Tanzu-Dev Changes
+          image: atlassian/default-image:latest
+          script:
+            - git config --global user.name 'bitbucket-pipelines'
+            - git config --global user.email 'bitbucket-pipelines@bitbucket.org'
+            # Generate a unique tag. Example: tanzu-dev-2023-04-01-123456-abcdef
+            - TAG="tanzu-dev-$(date +'%Y-%m-%d-%H%M%S')-$(git rev-parse --short HEAD)"
+            - git tag $TAG
+            - git push origin $TAG
+            - echo "Tag $TAG created and pushed successfully."
