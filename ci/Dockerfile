@@ -1,20 +1,15 @@
-# Use an official Node runtime as a parent image
 FROM node:alpine
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+# Create app directory
+WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+#copy source 
+COPY . /app
 
-# Install dependencies
+# Install deps 
 RUN npm install
 
-# Bundle app source
-COPY . .
-
-# Build your Next.js app
+# Build 
 RUN npm run build
 
-# Start the Next.js app
-CMD ["npm", "start"]
+ENTRYPOINT [ "npm", "run", "start" ]
