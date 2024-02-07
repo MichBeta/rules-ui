@@ -6,7 +6,7 @@ WORKDIR /app
 #copy source 
 COPY . /app
 
-CMD ls -la
+RUN ls -la
 
 # Install app dependencies
 EXPOSE 3000
