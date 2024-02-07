@@ -119,12 +119,18 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                 const columnToAdd = columns.find((val) => val.key === columnKey);
                 newColumns = columnToAdd ? [...prevColumns, columnToAdd] : prevColumns;
             }
-            updateCurrentData(data, newColumns);
+            updateCurrentData(data, newColumns, claimsPerPage, srtBy,srtAscending);
             return newColumns;
         });
     };
 
-    const updateCurrentData = (allData: any[], newColumns: any[]) => {
+    const claimsPerPageHandler = (value: number) => {
+        console.log("claimsPerPageHandler", value);
+        setClaimsPerPage(value);
+        updateCurrentData(data, currentColumns, value, srtBy, srtAscending);
+    }
+
+    const updateCurrentData = (allData: any[], newColumns: any[], perPage: number, sortBy: string, sortAscending: boolean) => {
         let newData = allData.map(row => {
             return getSubsetOfProperties(row, newColumns.map(col => col.key));
         });
@@ -132,24 +138,27 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
         console.log("currenUserConfig before update", currentUserConfig);
         if (view !== undefined && currentUserConfig !== undefined &&
             ((currentUserConfig.views[view].columnsToShow !== newColumns) ||
-                (currentUserConfig.views[view].numberOfItemsPerPage !== claimsPerPage) ||
-                (currentUserConfig.views[view].sortBy !== srtBy) ||
-                (currentUserConfig.views[view].sortAscending !== srtAscending))) {
+                (currentUserConfig.views[view].numberOfItemsPerPage !== perPage) ||
+                (currentUserConfig.views[view].sortBy !== sortBy) ||
+                (currentUserConfig.views[view].sortAscending !== sortAscending))) {
 
-            currentUserConfig = UserConfig.updateViewFromJson(currentUserConfig, new View(currentUserConfig.views[view].name, newColumns, claimsPerPage, srtBy, srtAscending));
+            console.log("claimsPerPage", claimsPerPage);
 
-            console.log("currenUserConfig after update", currentUserConfig);
+            let tempUserConfig = UserConfig.updateViewFromJson(currentUserConfig, new View(currentUserConfig.views[view].name, newColumns, perPage, sortBy, sortAscending));
 
-            updateUserConfigByUserId(currentUserConfig).unwrap().then((data) => {
+            console.log("currenUserConfig after update", tempUserConfig);
+
+            updateUserConfigByUserId(tempUserConfig).unwrap().then((data) => {
                 console.log("updateUserConfigByUserId", data);
             }).catch((error) => {
                 console.log("updateUserConfigByUserId error", error);
             });
 
+            currentUserConfig = tempUserConfig;
+
         }
 
-
-        setCurrentData(newData.slice(0, claimsPerPage));
+        setCurrentData(newData.slice(0, perPage));
 
     }
 
@@ -226,7 +235,8 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                     <div className="w-72">
                         <Select label="Number of Rows" value={(parseInt(((perPage+9)/10).toString())*10).toString()} onChange={(e) => {
                             if(e === undefined) return;
-                            setClaimsPerPage(parseInt(e));
+                            console.log("e", e);
+                            claimsPerPageHandler(parseInt(e));
                         }}>
                             <Option value={"10"}>10</Option>
                             <Option value={"20"}>20</Option>
