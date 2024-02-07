@@ -74,8 +74,8 @@ jobs:
                 apk add --no-cache git
                 cd source-git
                 DOCKER_TAG="latest"
-                sed -i "s/:VERSION/:$DOCKER_TAG/" ci/k8s/dev/deployment.yaml
-                cat ci/k8s/dev/deployment.yaml | grep "image:"
+                sed -i "s/:VERSION/:$DOCKER_TAG/" ci/k8s/dev/solera-rms-compliance-rules-newui-deployment.yaml
+                cat ci/k8s/dev/solera-rms-compliance-rules-newui-deployment.yaml | grep "image:"
       - put: kubectl-deploy-dev
         params:
           file: source-git/ci/k8s/dev

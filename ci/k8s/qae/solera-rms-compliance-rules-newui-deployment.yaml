@@ -9,7 +9,7 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      service: rules-newui
+      service: solera-rms-compliance-rules-newui
   strategy:
     rollingUpdate:
       maxSurge: 1
