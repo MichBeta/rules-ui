@@ -52,7 +52,7 @@ spec:
               value: /app/newrelic/newrelic-netcore20-agent/libNewRelicProfiler.so
             - name: VCAP_SERVICES
               valueFrom:
-                secretKeyRef:
+                configMapKeyRef:
                   key: services
                   name: rulesuivcap
           image: feeds.axadmin.net/docker/rms/nvcmp/rules-newui:VERSION
