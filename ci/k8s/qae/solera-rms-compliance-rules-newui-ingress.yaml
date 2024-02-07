@@ -7,11 +7,9 @@ metadata:
     service: solera-rms-compliance-rules-newui
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/hsts: "true"
-    nginx.ingress.kubernetes.io/hsts-preload: "true"
-    nginx.ingress.kubernetes.io/hsts-include-subdomains: "true"
-    nginx.ingress.kubernetes.io/hsts-max-age: "31536000"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
 spec:
   rules:
     - host: rules-newui.tkg-rms-qae.usdc01.solera.farm
@@ -21,7 +19,7 @@ spec:
               service:
                 name: solera-rms-compliance-rules-newui
                 port:
-                  number: 8080
+                  number: 3000
             path: /
             pathType: Prefix
 status:

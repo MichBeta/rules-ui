@@ -9,7 +9,7 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      service: rules-newui
+      service: solera-rms-compliance-rules-newui
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -27,9 +27,7 @@ spec:
         solera-ingress: enabled
     spec:
       containers:
-        - args:
-            - ./ci/build.sh
-          env:
+        - env:
             - name: APPLICATION_SERVICES
               value: https://applicationservices-qae.tkg-rms-qae.usdc01.solera.farm/
             - name: REACT_ENVIRONMENT
@@ -50,11 +48,6 @@ spec:
               value: /app/newrelic/newrelic-netcore20-agent
             - name: CORECLR_PROFILER_PATH
               value: /app/newrelic/newrelic-netcore20-agent/libNewRelicProfiler.so
-            - name: VCAP_SERVICES
-              valueFrom:
-                secretKeyRef:
-                  key: services
-                  name: rulesuivcap
           image: feeds.axadmin.net/docker/rms/nvcmp/rules-newui:VERSION
           imagePullPolicy: IfNotPresent
           livenessProbe:
