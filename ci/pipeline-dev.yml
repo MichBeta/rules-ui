@@ -65,15 +65,15 @@ jobs:
           outputs:
             - name: source-git
           run:
-            path: bash
+            path: sh
             args:
               - -exc
               - |
+                #!/bin/sh
                 set -x
-                apt-get update
-                apt-get install -y git
+                apk add --no-cache git
                 cd source-git
-                DOCKER_TAG=$(git describe | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')
+                DOCKER_TAG="latest"
                 sed -i "s/:VERSION/:$DOCKER_TAG/" ci/k8s/dev/deployment.yaml
                 cat ci/k8s/dev/deployment.yaml | grep "image:"
       - put: kubectl-deploy-dev
