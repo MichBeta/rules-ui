@@ -6,7 +6,10 @@ WORKDIR /app
 #copy source 
 COPY . /app
 
+CMD ls -la
+
 # Install app dependencies
 EXPOSE 3000
 
-CMD [ "npm", "start" ]
+# Start the application
+ENTRYPOINT ["npm", "run", "start"]
