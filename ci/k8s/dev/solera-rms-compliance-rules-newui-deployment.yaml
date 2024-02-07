@@ -27,9 +27,7 @@ spec:
         solera-ingress: enabled
     spec:
       containers:
-        - args:
-            - ./ci/build.sh
-          env:
+        - env:
             - name: APPLICATION_SERVICES
               value: https://applicationservices-dev.tkg-rms-dev.usdc01.solera.farm/
             - name: REACT_ENVIRONMENT
