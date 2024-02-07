@@ -10,8 +10,6 @@ inputs:
   - name: source-git
 outputs:
   - name: build-output
-  - name: versions
-  - name: source-git
 run:
   path: sh
   args:
@@ -34,11 +32,4 @@ run:
 
       # Copy the build output to the `build-output` directory for Dockerization
       # echo $version > ./.next/version.txt
-      ls -la ./.next
       cp -R ".next/"* $output_directory
-      ls -la ${PWD}
-      ls -la ${PWD}/ci
-
-      # (Optional) Additional steps such as linting, testing, etc.
-      # npm run lint
-      # npm test

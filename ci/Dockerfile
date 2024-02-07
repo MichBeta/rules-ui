@@ -4,7 +4,7 @@ FROM node:alpine
 WORKDIR /app
 
 #copy source 
-COPY . /app
+COPY ./build-output/ /app
 
 RUN ls -la
 
