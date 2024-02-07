@@ -6,10 +6,7 @@ WORKDIR /app
 #copy source 
 COPY . /app
 
-# Install deps 
-RUN npm install
+# Install app dependencies
+EXPOSE 3000
 
-# Build 
-RUN npm run build
-
-ENTRYPOINT [ "npm", "run", "start" ]
+CMD [ "npm", "start" ]
