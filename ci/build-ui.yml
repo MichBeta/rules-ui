@@ -32,4 +32,4 @@ run:
 
       # Copy the build output to the `build-output` directory for Dockerization
       # echo $version > ./.next/version.txt
-      cp -R ".next/"* $output_directory
+      cp -R * $output_directory

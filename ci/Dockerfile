@@ -7,6 +7,7 @@ WORKDIR /app
 COPY ./build-output/ /app
 
 RUN ls -la
+RUN ls -la /app
 
 # Install app dependencies
 EXPOSE 3000
