@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy the package.json and package-lock.json (or yarn.lock) files
 COPY package*.json ./
 
+RUN npm init -y
+
 # Install dependencies
 RUN npm install
 
