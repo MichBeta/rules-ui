@@ -7,7 +7,7 @@ RUN node -v
 WORKDIR /app
 
 #copy source 
-COPY . /app
+COPY ./source-git /app
 
 RUN ls -la
 RUN ls -la /app
