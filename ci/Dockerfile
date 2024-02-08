@@ -34,5 +34,5 @@ COPY --from=builder /app/package*.json ./
 # Expose the port Next.js runs on
 EXPOSE 3000
 
-# Command to run the application
-CMD ["npm", "start"]
+# Run the application
+ENTRYPOINT ["ls", "-la"]
