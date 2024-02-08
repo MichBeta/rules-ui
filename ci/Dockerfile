@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copy the package.json and package-lock.json (or yarn.lock) files
 COPY package*.json ./
+COPY run.sh ./
 
 RUN npm init -y
 
@@ -30,9 +31,11 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/run.sh ./
 
 # Expose the port Next.js runs on
 EXPOSE 3000
 
 # Run the application
-ENTRYPOINT ["ls", "-la"]
+ENTRYPOINT ["./run.sh"]
+CMD ["./run.sh"]
