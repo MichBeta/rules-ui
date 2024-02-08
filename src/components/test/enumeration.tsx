@@ -1,6 +1,6 @@
 import {useGetEnumerationsQuery} from "@/redux/services/enumerationApi";
 import {useState} from "react";
-import {List, ListItem, Card} from "@material-tailwind/react";
+import {List, ListItem} from "@material-tailwind/react";
 
 
 export function Enumerations() {
@@ -25,7 +25,7 @@ export function Enumerations() {
                                 ))}
                             </select>
                             {enumeration ?
-                                <Card className={"overflow-auto bg-[#1B1E27]"} style={{maxHeight: "80vh"}}>
+                                <div className={"overflow-auto bg-[#1B1E27]"} style={{maxHeight: "80vh"}}>
                                     <List>
                                         {Object.entries(values[enumeration]).map(([key, value]) => (
                                             <ListItem key={key} className={"bg-white font-bold"}>
@@ -33,7 +33,7 @@ export function Enumerations() {
                                             </ListItem>
                                         ))}
                                     </List>
-                                </Card>
+                                </div>
                                 : null}
                         </div>
                         : null}

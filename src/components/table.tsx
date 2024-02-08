@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import Pagination from "@/components/pagination";
-import {Card, CardBody, CardHeader, CardFooter, Tooltip, Typography, Input} from "@material-tailwind/react";
+import {Tooltip, Input} from "@material-tailwind/react";
 import {AiOutlineEdit, AiOutlineDelete} from "react-icons/ai";
 import {BiArchiveIn} from "react-icons/bi";
 import {FaMagnifyingGlass} from "react-icons/fa6";
@@ -45,10 +45,10 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
     }
 
     return (
-        <Card className="h-full w-full">
-            <CardBody className="overflow-auto">
+        <div className="h-full w-full">
+            <div className="overflow-auto">
                 {searchable ?
-                    <CardHeader floated={false} shadow={false} className="rounded-none">
+                    <div className="rounded-none">
                         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
                             <div className="w-full md:w-72 py-2">
                                 <Input
@@ -59,7 +59,7 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
                                 />
                             </div>
                         </div>
-                    </CardHeader>
+                    </div>
                     : null}
                 <table className="h-full w-full" key={currentPage}>
                     <thead>
@@ -69,13 +69,12 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
                                 key={head.key}
                                 className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                             >
-                                <Typography
-                                    variant="small"
+                                <div
                                     color="blue-gray"
                                     className="font-normal leading-none opacity-70"
                                 >
                                     {head.name}
-                                </Typography>
+                                </div>
                             </th>
                         )) : null}
                         {columns.map((head) => (
@@ -83,24 +82,22 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
                                 key={head.key}
                                 className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                             >
-                                <Typography
-                                    variant="small"
+                                <div
                                     color="blue-gray"
                                     className="font-normal leading-none opacity-70"
                                 >
                                     {head.name}
-                                </Typography>
+                                </div>
                             </th>
                         ))}
                         {actions ?
                         <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                            <Typography
-                                variant="small"
+                            <div
                                 color="blue-gray"
                                 className="font-normal leading-none opacity-70"
                             >
                                 Actions
-                            </Typography>
+                            </div>
                         </th>
                         : null}
                     </tr>
@@ -115,8 +112,8 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
                             )) : null}
                             {columns.map((col) => (
                                 <td key={col.key} className="p-4">
-                                    <Typography variant="small" color="blue-gray"
-                                                className="font-normal">{row[col.key]}</Typography>
+                                    <div color="blue-gray"
+                                                className="font-normal">{row[col.key]}</div>
                                 </td>
                             ))}
                             {actions ?
@@ -180,11 +177,11 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
                     ))}
                     </tbody>
                 </table>
-            </CardBody>
-            <CardFooter>
+            </div>
+            <div>
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange}/>
-            </CardFooter>
-        </Card>
+            </div>
+        </div>
     );
 }
 

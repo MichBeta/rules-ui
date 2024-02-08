@@ -3,7 +3,6 @@ import {useGetRulesByOwnerQuery} from "@/redux/services/ruleApi";
 import Table from "@/components/table";
 import {
     Button,
-    Typography,
     Dialog,
     DialogHeader,
     DialogBody,
@@ -43,7 +42,7 @@ export function Groups() {
                 <>
                     <div className={"flex flex-row-reverse items-center gap-4"}>
                         <Button color="blue" className="flex items-center gap-3" onClick={handleOpen}>
-                            <Typography color="white">Add Group</Typography>
+                            <div color="white">Add Group</div>
                         </Button >
                     </div>
                     <Table
@@ -59,7 +58,7 @@ export function Groups() {
                     />
                     <Dialog open={open} handler={handleOpen} size={"xl"}>
                         <DialogHeader>
-                            <Typography color="blue-gray">Add Group</Typography>
+                            <div color="blue-gray">Add Group</div>
                         </DialogHeader>
                         <DialogBody>
                             <div className="mb-4 flex flex-col gap-6">

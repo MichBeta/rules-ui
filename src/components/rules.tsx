@@ -3,7 +3,6 @@ import Table from "@/components/table";
 import {
     Spinner,
     Button,
-    Typography,
     DialogHeader,
     DialogBody,
     Input,
@@ -42,7 +41,7 @@ export function Rules() {
                 <>
                     <div className={"flex flex-row-reverse items-center gap-4"}>
                         <Button color="blue" className="flex items-center gap-3" onClick={handleOpen}>
-                            <Typography color="white">Add Rule</Typography>
+                            <div color="white">Add Rule</div>
                         </Button >
                     </div>
                     <Table
@@ -59,7 +58,7 @@ export function Rules() {
                     />
                     <Dialog open={open} handler={handleOpen} size={"xl"}>
                         <DialogHeader>
-                            <Typography color="blue-gray">Add Rule</Typography>
+                            <div color="blue-gray">Add Rule</div>
                         </DialogHeader>
                         <DialogBody>
                             <div className="mb-4 flex flex-col gap-6">

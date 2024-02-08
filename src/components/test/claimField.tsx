@@ -1,6 +1,6 @@
 import {useGetClaimFieldsQuery} from "@/redux/services/claimFieldApi";
 import React, {useState, useEffect} from 'react';
-import {Card, List, ListItem, Chip, Input} from "@material-tailwind/react";
+import {List, ListItem, Chip, Input} from "@material-tailwind/react";
 import {ClaimField} from "@/models/claimField";
 import {metadata} from "@/data/metadata";
 import {MetaData, Field, CompareOperator, FieldValue} from "@/models/metadata";
