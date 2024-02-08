@@ -33,22 +33,12 @@ jobs:
       - in_parallel:
           - get: source-git
             trigger: true
-      - file: source-git/ci/build-ui.yml
+      - put: docker-nvcmp-rules-newui
         params:
-          environment: dev
-          file_prefix: ((project_key))
-          proget_password: ((proget-password))
-          proget_username: ((proget-user))
-          project_name: ((project_name))
-        task: build-rules-newui
-      - params:
-          build: ./
+          build: source-git/
           dockerfile: source-git/ci/Dockerfile
           tag_as_latest: true
-          tag_as_version: true
-          tag_prefix: "V"
-          tag_version: "1.0.0"
-        put: docker-nvcmp-rules-newui
+          tag: "V1.0.0"
   - name: deploy-dev
     plan:
       - get: docker-nvcmp-rules-newui
