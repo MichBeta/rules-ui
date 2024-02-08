@@ -1,36 +1,29 @@
-# Stage 1: Building the application
-FROM node:alpine as builder
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy the package.json and package-lock.json (or yarn.lock) files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of your application's code
-COPY . .
-
-# Build the application
-RUN npm run build
-
-# Stage 2: Serve the application
 FROM node:alpine
 
-# Set the working directory in the container
+# Print the node version
+RUN node -v
+
+# Create app directory
 WORKDIR /app
 
-# Copy over the built artifacts from the builder stage
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+# Copy source
+COPY . /app
 
-# Expose the port Next.js runs on
+# List the contents of the app directory again to debug
+RUN ls -la /app
+
+# Install app dependencies
+RUN npm install
+
+# Build the app
+RUN npm run build
+
+# Remove dev dependencies
+RUN npm prune --production
+
+
+# Expose the port
 EXPOSE 3000
 
-# Command to run the application
-CMD ["ls", "-la"]
+# Start the application
+CMD ["npm", "start"]
