@@ -38,7 +38,6 @@ jobs:
           build: source-git/
           dockerfile: source-git/ci/Dockerfile
           tag_as_latest: true
-          tag: "V1.0.0"
   - name: deploy-dev
     plan:
       - get: docker-nvcmp-rules-newui

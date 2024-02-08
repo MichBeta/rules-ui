@@ -6,10 +6,10 @@ RUN node -v
 # Create app directory
 WORKDIR /app
 
-#copy source 
+# Copy source
 COPY . /app
 
-RUN ls -la
+# List the contents of the app directory to debug
 RUN ls -la /app
 
 # Install app dependencies
@@ -21,16 +21,11 @@ RUN npm run build
 # Remove dev dependencies
 RUN npm prune --production
 
-# Set the environment
-ENV NODE_ENV=development
-
-# Check the environment files
-RUN ls -la
+# List the contents of the app directory again to debug
 RUN ls -la /app
 
 # Expose the port
 EXPOSE 3000
 
 # Start the application
-# ENTRYPOINT ["npm", "run", "start"]
-ENTRYPOINT ["ls", "-la"]
+CMD ["npm", "start"]

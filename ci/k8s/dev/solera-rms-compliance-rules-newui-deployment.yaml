@@ -48,6 +48,8 @@ spec:
               value: /app/newrelic/newrelic-netcore20-agent
             - name: CORECLR_PROFILER_PATH
               value: /app/newrelic/newrelic-netcore20-agent/libNewRelicProfiler.so
+            - name: NODE_ENV
+              value: Development
           image: feeds.axadmin.net/docker/rms/nvcmp/rules-newui:VERSION
           imagePullPolicy: IfNotPresent
           livenessProbe:
