@@ -9,27 +9,14 @@ image_resource:
 inputs:
   - name: source-git
 outputs:
-  - name: build-output
+  - name: source-git
 run:
   path: sh
   args:
     - -exc
     - |
       #!/bin/sh
-      # install git
-      # apk add --no-cache git
-      output_directory=${PWD}/build-output
-      # Format the version
-      # version=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
-      # Navigate to the project directory
+      apk add --no-cache git
+      version=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
       cd source-git
-      
-      # Install dependencies
-      npm install
-
-      # Build the project
-      npm run build
-
-      # Copy the build output to the `build-output` directory for Dockerization
-      # echo $version > ./.next/version.txt
-      cp -R * $output_directory
+      echo $version > ./ci/version.txt

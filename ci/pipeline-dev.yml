@@ -33,11 +33,20 @@ jobs:
       - in_parallel:
           - get: source-git
             trigger: true
+      - file: source-git/ci/build-ui.yml
+        params:
+          environment: dev
+          file_prefix: ((project_key))
+          proget_password: ((proget-password))
+          proget_username: ((proget-user))
+          project_name: ((project_name))
+        task: build-rules-newui
       - put: docker-nvcmp-rules-newui
         params:
-          build: source-git/
+          build: ./
           dockerfile: source-git/ci/Dockerfile
           tag_as_latest: true
+          tag_file: source-git/ci/version.txt
   - name: deploy-dev
     plan:
       - get: docker-nvcmp-rules-newui
@@ -62,8 +71,7 @@ jobs:
                 set -x
                 apk add --no-cache git
                 cd source-git
-                GIT_TAG=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')
-                DOCKER_TAG="latest"
+                DOCKER_TAG=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
                 sed -i "s/:VERSION/:$DOCKER_TAG/" ci/k8s/dev/solera-rms-compliance-rules-newui-deployment.yaml
                 cat ci/k8s/dev/solera-rms-compliance-rules-newui-deployment.yaml | grep "image:"
       - put: kubectl-deploy-dev
