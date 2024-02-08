@@ -32,4 +32,5 @@ RUN ls -la /app
 EXPOSE 3000
 
 # Start the application
-ENTRYPOINT ["npm", "run", "start"]
+# ENTRYPOINT ["npm", "run", "start"]
+ENTRYPOINT ["ls", "-la"]
