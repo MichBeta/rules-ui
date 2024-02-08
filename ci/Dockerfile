@@ -9,7 +9,7 @@ WORKDIR /app
 # Copy source
 COPY . /app
 
-# List the contents of the app directory to debug
+# List the contents of the app directory again to debug
 RUN ls -la /app
 
 # Install app dependencies
@@ -21,8 +21,6 @@ RUN npm run build
 # Remove dev dependencies
 RUN npm prune --production
 
-# List the contents of the app directory again to debug
-RUN ls -la /app
 
 # Expose the port
 EXPOSE 3000

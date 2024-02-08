@@ -62,6 +62,7 @@ jobs:
                 set -x
                 apk add --no-cache git
                 cd source-git
+                GIT_TAG=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')
                 DOCKER_TAG="latest"
                 sed -i "s/:VERSION/:$DOCKER_TAG/" ci/k8s/dev/solera-rms-compliance-rules-newui-deployment.yaml
                 cat ci/k8s/dev/solera-rms-compliance-rules-newui-deployment.yaml | grep "image:"
