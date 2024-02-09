@@ -4,13 +4,12 @@ import {store} from "./store";
 import Navbar from "@/components/navbar";
 import {usePathname} from 'next/navigation';
 import {Main} from "@/components/main";
-import {ThemeProvider} from "@material-tailwind/react";
 
 export function Providers({children}: { children: React.ReactNode }) {
     const router = usePathname()
     const isLoginPage = router.includes("login")
     return <Provider store={store}>
-        <ThemeProvider>
+        <div>
             {!isLoginPage && <>
                 <Navbar/>
                 <Main>
@@ -19,6 +18,6 @@ export function Providers({children}: { children: React.ReactNode }) {
             </>
             }
             {isLoginPage && children}
-        </ThemeProvider>
+        </div>
     </Provider>;
 }
