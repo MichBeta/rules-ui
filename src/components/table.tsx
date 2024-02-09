@@ -51,10 +51,10 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
                     <div className="rounded-none">
                         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
                             <div className="w-full md:w-72 py-2">
-                                <Input
-                                    label="Search"
+                                <input
+                                    /*label="Search"
                                     crossOrigin={undefined}
-                                    icon={<FaMagnifyingGlass/>}
+                                    icon={<FaMagnifyingGlass/>}*/
                                     onChange={onSearch}
                                 />
                             </div>
@@ -119,57 +119,24 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
                             {actions ?
                             <td className="p-4">
                                 <div className="flex items-center gap-3">
-                                    <Tooltip
-                                        placement="top"
-                                        color="lightBlue"
-                                        content="Edit"
-                                        size="regular"
-                                        animate={{
-                                            mount: { scale: 1, y: 0 },
-                                            unmount: { scale: 0, y: 25 },
-                                        }}
-                                    >
                                     <button
                                         className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
                                         aria-label="Edit"
                                     >
                                         <AiOutlineEdit/>
                                     </button>
-                                    </Tooltip>
-                                    <Tooltip
-                                        placement="top"
-                                        color="lightBlue"
-                                        content="Delete"
-                                        size="regular"
-                                        animate={{
-                                            mount: { scale: 1, y: 0 },
-                                            unmount: { scale: 0, y: 25 },
-                                        }}
-                                    >
                                     <button
                                         className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
                                         aria-label="Delete"
                                     >
                                         <AiOutlineDelete/>
                                     </button>
-                                    </Tooltip>
-                                    <Tooltip
-                                        placement="top"
-                                        color="lightBlue"
-                                        content="Archive"
-                                        size="regular"
-                                        animate={{
-                                            mount: { scale: 1, y: 0 },
-                                            unmount: { scale: 0, y: 25 },
-                                        }}
-                                    >
                                     <button
                                         className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
                                         aria-label="Archive"
                                     >
                                         <BiArchiveIn/>
                                     </button>
-                                    </Tooltip>
                                 </div>
                             </td>
                             : null}

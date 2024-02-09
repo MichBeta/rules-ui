@@ -1,16 +1,6 @@
 import {useGetGroupsByOrganizationIdQuery} from "@/redux/services/groupApi";
 import {useGetRulesByOwnerQuery} from "@/redux/services/ruleApi";
 import Table from "@/components/table";
-import {
-    Button,
-    Dialog,
-    DialogHeader,
-    DialogBody,
-    DialogFooter,
-    Input,
-    Checkbox,
-    Textarea
-} from "@material-tailwind/react";
 import TabsComponent from "@/components/tabs";
 import {useState} from "react";
 import {Rule} from "@/redux/services/ruleApi";
@@ -41,9 +31,9 @@ export function Groups() {
                 ?
                 <>
                     <div className={"flex flex-row-reverse items-center gap-4"}>
-                        <Button color="blue" className="flex items-center gap-3" onClick={handleOpen}>
+                        <button color="blue" className="flex items-center gap-3" onClick={handleOpen}>
                             <div color="white">Add Group</div>
-                        </Button >
+                        </button >
                     </div>
                     <Table
                         data={data}
@@ -56,7 +46,7 @@ export function Groups() {
                         actions={true}
                         columnID={"name"}
                     />
-                    <Dialog open={open} handler={handleOpen} size={"xl"}>
+                    {/*<Dialog open={open} handler={handleOpen} size={"xl"}>
                         <DialogHeader>
                             <div color="blue-gray">Add Group</div>
                         </DialogHeader>
@@ -105,7 +95,7 @@ export function Groups() {
                                 Cancel
                             </Button>
                         </DialogFooter>
-                    </Dialog>
+                    </Dialog>*/}
                 </>
                 : null}
         </div>
