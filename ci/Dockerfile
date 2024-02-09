@@ -1,36 +1,29 @@
-# Etapa de construcción
-# --------------------
-# Selecciona una imagen base con Node.js
-FROM node:14-slim as build
+FROM node:alpine
 
-# Establece el directorio de trabajo en el contenedor
+# Print the node version
+RUN node -v
+
+# Create app directory
 WORKDIR /app
 
-# Copia el archivo de dependencias y las instala
-COPY package.json package-lock.json ./
+# Copy source
+COPY ./ /app
+
+# List the contents of the app directory again to debug
+RUN ls -la /app
+
+# Install app dependencies
 RUN npm install
 
-# Copia el resto del código fuente de la aplicación
-COPY . .
+# Build the app
+RUN npm run build
 
-# Construye la aplicación para producción
-RUN npm run build || true
-RUN cp /root/.npm/_logs/*.log /app/
+# Remove dev dependencies
+RUN npm prune --production
 
-# Etapa de ejecución
-# ------------------
-# Selecciona una imagen base más ligera para la ejecución
-FROM node:14-slim
 
-# Establece el directorio de trabajo en el contenedor
-WORKDIR /app
+# Expose the port
+EXPOSE 3000
 
-# Copia el código fuente construido y los módulos de Node.js necesarios desde la etapa 'build'
-COPY --from=build /app/build ./build
-COPY --from=build /app/node_modules ./node_modules
-
-# Expone el puerto que la aplicación utilizará
-EXPOSE 8080
-
-# Define el comando para ejecutar la aplicación
-CMD ["node", "build/index.js"]
+# Start the application
+CMD ["npm", "run", "start"]

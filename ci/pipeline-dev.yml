@@ -1,33 +1,13 @@
 groups:
   - name: dev
     jobs:
-      - display-config
       - build-rules-newui
       - deploy-dev
   - name: qa
     jobs:
+      - build-rules-newui-qae
       - deploy-qa
 jobs:
-  - name: display-config
-    plan:
-      - task: print-git-uri
-        config:
-          platform: linux
-          image_resource:
-            type: registry-image
-            source: { repository: busybox }
-          params:
-            GIT_URI: ((git-uri))
-            PROJECT_KEY: ((project_key))
-            PROJECT_NAME: ((project_name))
-          run:
-            path: sh
-            args:
-              - -c
-              - |
-                echo "The GIT_URI is $GIT_URI"
-                echo "The PROJECT_KEY is $PROJECT_KEY"
-                echo "The PROJECT_NAME is $PROJECT_NAME"
   - name: build-rules-newui
     plan:
       - in_parallel:
@@ -41,12 +21,31 @@ jobs:
           proget_username: ((proget-user))
           project_name: ((project_name))
         task: build-rules-newui
-      - params:
-          build: ./
-          dockerfile: source-git/ci/docker/rulesui-dockerfile
+      - put: docker-nvcmp-rules-newui
+        params:
+          build: ./source-git
+          dockerfile: source-git/ci/Dockerfile
           tag_as_latest: true
           tag_file: source-git/ci/version.txt
-        put: docker-nvcmp-rules-newui
+  - name: build-rules-newui-qae
+    plan:
+      - in_parallel:
+          - get: source-git-qae
+            trigger: true
+      - file: source-git-qae/ci/build-ui-qae.yml
+        params:
+          environment: qae
+          file_prefix: ((project_key))
+          proget_password: ((proget-password))
+          proget_username: ((proget-user))
+          project_name: ((project_name))
+        task: build-rules-newui
+      - put: docker-nvcmp-rules-newui
+        params:
+          build: ./source-git-qae
+          dockerfile: source-git-qae/ci/Dockerfile
+          tag_as_latest: true
+          tag_file: source-git-qae/ci/version.txt
   - name: deploy-dev
     plan:
       - get: docker-nvcmp-rules-newui
@@ -63,17 +62,17 @@ jobs:
           outputs:
             - name: source-git
           run:
-            path: bash
+            path: sh
             args:
               - -exc
               - |
+                #!/bin/sh
                 set -x
-                apt-get update
-                apt-get install -y git
+                apk add --no-cache git
                 cd source-git
-                DOCKER_TAG=$(git describe | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')
-                sed -i "s/:VERSION/:$DOCKER_TAG/" ci/k8s/dev/deployment.yaml
-                cat ci/k8s/dev/deployment.yaml | grep "image:"
+                DOCKER_TAG=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_dev
+                sed -i "s/:VERSION/:$DOCKER_TAG/" ci/k8s/dev/solera-rms-compliance-rules-newui-deployment.yaml
+                cat ci/k8s/dev/solera-rms-compliance-rules-newui-deployment.yaml | grep "image:"
       - put: kubectl-deploy-dev
         params:
           file: source-git/ci/k8s/dev
@@ -81,33 +80,33 @@ jobs:
   - name: deploy-qa
     plan:
       - get: docker-nvcmp-rules-newui
-      - get: source-git
+      - get: source-git-qae
         passed:
-          - build-rules-newui
-        trigger: false
+          - build-rules-newui-qae
+        trigger: true
       - task: prepare-k8s
         image: docker-nvcmp-rules-newui
         config:
           platform: linux
           inputs:
-            - name: source-git
+            - name: source-git-qae
           outputs:
-            - name: source-git
+            - name: source-git-qae
           run:
-            path: bash
+            path: sh
             args:
               - -exc
               - |
+                #!/bin/sh
                 set -x
-                apt-get update
-                apt-get install -y git
-                cd source-git
-                DOCKER_TAG=$(git describe | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')
-                sed -i "s/:VERSION/:$DOCKER_TAG/" ci/k8s/qae/deployment.yaml
-                cat ci/k8s/qae/deployment.yaml | grep "image:"
+                apk add --no-cache git
+                cd source-git-qae
+                DOCKER_TAG=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_qae
+                sed -i "s/:VERSION/:$DOCKER_TAG/" ci/k8s/qae/solera-rms-compliance-rules-newui-deployment.yaml
+                cat ci/k8s/qae/solera-rms-compliance-rules-newui-deployment.yaml | grep "image:"
       - put: kubectl-deploy-qae
         params:
-          file: source-git/ci/k8s/qae
+          file: source-git-qae/ci/k8s/qae
           path: deployables
 resource_types:
   - name: concourse-kubectl
@@ -147,5 +146,12 @@ resources:
     icon: bitbucket
     source:
       branch: tanzu-dev
+      private_key: ((novoCompliance.private-repo-key-ui))
+      uri: git@bitbucket.org:SoleraNA/rules-newui.git
+  - name: source-git-qae
+    type: git
+    icon: bitbucket
+    source:
+      branch: tanzu-qae
       private_key: ((novoCompliance.private-repo-key-ui))
       uri: git@bitbucket.org:SoleraNA/rules-newui.git
