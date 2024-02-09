@@ -32,7 +32,7 @@ jobs:
       - in_parallel:
           - get: source-git-qae
             trigger: true
-      - file: source-git-qae/ci/build-ui.yml
+      - file: source-git-qae/ci/build-ui-qae.yml
         params:
           environment: qae
           file_prefix: ((project_key))
@@ -91,7 +91,7 @@ jobs:
           inputs:
             - name: source-git-qae
           outputs:
-            - name: source-git
+            - name: source-git-qae
           run:
             path: sh
             args:
