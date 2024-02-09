@@ -1,14 +1,5 @@
 import {Rule, useGetRulesByOwnerQuery} from "@/redux/services/ruleApi";
 import Table from "@/components/table";
-import {
-    Spinner,
-    Button,
-    DialogHeader,
-    DialogBody,
-    Input,
-    Textarea,
-    Checkbox, DialogFooter, Dialog
-} from "@material-tailwind/react";
 import Cookies from "js-cookie";
 import {useState} from "react";
 import {metadata} from "@/data/metadata";
@@ -29,7 +20,8 @@ export function Rules() {
     console.log(data)
     if (isLoading) return (
         <div className={"flex flex-col space-y-4 items-center justify-center h-screen"}>
-            <Spinner className="h-16 w-16 text-gray-900/50"/>;
+            <svg className="animate-spin h-16 w-16 mr-3 ..." viewBox="0 0 24 24">
+            </svg>
         </div>
     )
     if (error) return <div>No rules found</div>
@@ -40,9 +32,9 @@ export function Rules() {
                 ?
                 <>
                     <div className={"flex flex-row-reverse items-center gap-4"}>
-                        <Button color="blue" className="flex items-center gap-3" onClick={handleOpen}>
+                        <button color="blue" className="flex items-center gap-3" onClick={handleOpen}>
                             <div color="white">Add Rule</div>
-                        </Button >
+                        </button >
                     </div>
                     <Table
                         data={data}
@@ -56,7 +48,7 @@ export function Rules() {
                         actions={true}
                         columnID={"ruleCode"}
                     />
-                    <Dialog open={open} handler={handleOpen} size={"xl"}>
+                    {/*<Dialog open={open} handler={handleOpen} size={"xl"}>
                         <DialogHeader>
                             <div color="blue-gray">Add Rule</div>
                         </DialogHeader>
@@ -73,7 +65,7 @@ export function Rules() {
                                 Cancel
                             </Button>
                         </DialogFooter>
-                    </Dialog>
+                    </Dialog>*/}
                 </>
                 : null}
         </div>

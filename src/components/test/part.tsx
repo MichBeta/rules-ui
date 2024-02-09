@@ -1,7 +1,6 @@
 import { useAppSelector } from "@/redux/hooks";
 import { useGetSectionsQuery } from "@/redux/services/sectionApi";
 import { useGetPartsBySectionCodeQuery } from "@/redux/services/partApi";
-import { List, ListItem, Chip, Stepper, Step, Button} from "@material-tailwind/react";
 import React, { useState, useEffect  } from 'react';
 import {GiSteeringWheel} from "react-icons/gi";
 import {TbNewSection} from "react-icons/tb";
@@ -60,7 +59,7 @@ export function Parts() {
 
     return (
         <div className="w-full px-24 py-4">
-            <Stepper
+            {/*<Stepper
                 activeStep={activeStep}
             >
                 <Step onClick={() => setActiveStep(selectedParts.length > 0?activeStep:0)}>
@@ -111,23 +110,23 @@ export function Parts() {
                         </div>
                     </div>
                 </Step>
-            </Stepper>
+            </Stepper>*/}
             <div className="mt-32">
                 {activeStep === 0 && (
                     <div className={"overflow-auto"} style={{ maxHeight: "80vh" }}>
-                        <List>
+                        {/*<List>
                             <ListItem className={`font-bold`} onClick={() => sectionFilterHandler(true)}>
                                 Passenger Car & Truck
                             </ListItem>
                             <ListItem className={`font-bold`} onClick={() => sectionFilterHandler(false)}>
                                 Motorcycle
                             </ListItem>
-                        </List>
+                        </List>*/}
                     </div>
                 )}
                 {activeStep === 1 && filteredSection ? (
                     <div className={"overflow-auto"} style={{ maxHeight: "80vh" }}>
-                        <List>
+                        {/*<List>
                             {filteredSection?.map((item, index) => (
                                 <ListItem key={index} className={"bg-white font-bold"} >
                                     <input
@@ -145,12 +144,12 @@ export function Parts() {
                                                 }}>{item.DescText}</div>
                                 </ListItem>
                             ))}
-                        </List>
+                        </List>*/}
                     </div>
                 ) : null}
                 {activeStep === 2 && Array.isArray(parts) ? (
                     <div className={"overflow-auto"} style={{ maxHeight: "80vh" }}>
-                        <List>
+                        {/*<List>
                             {parts && [...parts].sort((a: Part, b: Part) => (a.DescText > b.DescText) ? 1 : -1).map((item, index) => (
                                 <ListItem key={index} className={"bg-white font-bold"}>
                                     <input
@@ -168,7 +167,7 @@ export function Parts() {
                                     >{item.DescText}</div>
                                 </ListItem>
                             ))}
-                        </List>
+                        </List>*/}
                     </div>
                 ) : null}
             </div>

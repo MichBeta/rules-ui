@@ -1,7 +1,6 @@
 
 import { metadata } from "@/data/metadata";
 import { useGetClaimFieldsQuery } from "@/redux/services/claimFieldApi";
-import { Button, Textarea } from "@material-tailwind/react";
 import React, {useEffect, useState} from "react";
 
 
@@ -48,11 +47,11 @@ export function FieldsByCategorie({ fieldToMatch = "Select" }) {
                         {
                             options.map(
                                 (modelT, index) =>( 
-                                <Button color="blue" 
+                                <button color="blue"
                                 className="bg-blue-800 text-white mr-4 border-1 rounded-full py-3" 
                                 id={"btnOpt"} 
                                 onClick={ ()=> estType(modelT)} key={index}
-                                >{modelT}</Button>)
+                                >{modelT}</button>)
                             )
                         }
                     </div>
@@ -71,9 +70,9 @@ export function FieldsByCategorie({ fieldToMatch = "Select" }) {
                     </div>
                     {data !== null ?
                         < div className=" ml-px-500 align-content-center p-2" >
-                            <Textarea id="fieldG" className="object-center w-8 h-1" readOnly value={`${capt}(${selectedValue})`}>
+                            {/*<Textarea id="fieldG" className="object-center w-8 h-1" readOnly value={`${capt}(${selectedValue})`}>
 
-                            </Textarea>
+                            </Textarea>*/}
                         </div >
                         : null
                     }

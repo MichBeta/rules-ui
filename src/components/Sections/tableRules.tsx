@@ -1,5 +1,4 @@
 import TabsComponent from "@/components/tabs";
-import { Input, Textarea, Button } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import { metadata } from '@/data/metadata'
 import { useGetClaimFieldsQuery } from "@/redux/services/claimFieldApi";
@@ -58,10 +57,10 @@ export function TableRules() {
                 {
                     id: 1, label: "Description", value: "description", content: <>
                         <div className={"grid grid-cols-2 gap-6 "}>
-                            <Input className={"inp-main"} label="Code" crossOrigin={undefined} type="text"
+                            <input className={"inp-main"}  type="text"
                                 required={true} />
 
-                            <Input className={"inp-sec"} label="Name" crossOrigin={undefined} type="text"
+                            <input className={"inp-sec"} type="text"
                                 required={true} />
                             <br />
                         </div>
@@ -93,7 +92,7 @@ export function TableRules() {
                         </div>
 
                         <br />
-                        <Textarea
+                        {/*<Textarea
                             size={"lg"}
                             label={"Description"}
                             required={true}
@@ -103,7 +102,7 @@ export function TableRules() {
                             size={"lg"}
                             label={"Violation message"}
                             required={true}
-                        />
+                        />*/}
                     </>
                 },
                 {
