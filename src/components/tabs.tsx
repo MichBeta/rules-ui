@@ -29,11 +29,11 @@ export default function TabsComponent({ data, setAccordionOpen }: { data: TabMod
                 setAccordionOpen(0)
             }
             }
-            className={"grid"}
+            className={"grid p-0 m-0"}
         >
             <TabsHeader>
                 {data.map((tab) => {
-                    if(setAccordionOpen === undefined) return (<Tab key={`${tab.value}-${tab.id}`} value={tab.value}>
+                    if(setAccordionOpen === undefined) return (<Tab className="p-0" key={`${tab.value}-${tab.id}`} value={tab.value}>
                         {tab.label}
                     </Tab>)
 
@@ -44,9 +44,9 @@ export default function TabsComponent({ data, setAccordionOpen }: { data: TabMod
             </TabsHeader>
             <TabsBody
                 animate={{
-                    initial: { y: 250 },
+                    initial: { y: 150 },
                     mount: { y: 0 },
-                    unmount: { y: 250 },
+                    unmount: { y: 150 },
                 }}
             >
                 {data.map((tab) => (

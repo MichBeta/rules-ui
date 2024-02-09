@@ -236,7 +236,6 @@ export function AxnWorklist() {
         <div className={"flex flex-col space-y-4"}>
             {data
                 ?
-                <>
                     <WorklistTable
                         data={data}
                         columns={[
@@ -294,7 +293,6 @@ export function AxnWorklist() {
                         ]}
                         showColumns={userConfig.data?.views[view]?.columnsToShow ? userConfig.data?.views[view]?.columnsToShow as (keyof ClaimRow)[] : []}
                     />
-                </>
                 : null
             }
 

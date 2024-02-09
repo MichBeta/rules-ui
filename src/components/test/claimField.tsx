@@ -68,7 +68,7 @@ export  function ClaimFields() {
                             onChange={handlePredicateChange}
                         >
                             <option value={""}>Select Operator</option>
-                            {selectedCompareOperators.map((item, index) => (
+                                {selectedCompareOperators.map((item, index) => (
                                 <option key={index} value={item.code}>{item.name}</option>
                             ))}
                         </select>

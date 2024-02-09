@@ -1,11 +1,15 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import Pagination from "@/components/pagination";
-import {Card, CardBody, CardHeader, CardFooter, Tooltip, Typography, Input} from "@material-tailwind/react";
-import {AiOutlineEdit, AiOutlineDelete} from "react-icons/ai";
-import {BiArchiveIn} from "react-icons/bi";
-import {FaMagnifyingGlass} from "react-icons/fa6";
-import {setId} from "@/redux/features/tableRowIdSlice";
-import {useAppDispatch, useAppSelector} from "@/redux/hooks";
+import { Card, CardBody, CardHeader, CardFooter, 
+    Tooltip, Typography, Input, Dialog, 
+    DialogHeader, DialogBody, DialogFooter, Textarea, Button } from "@material-tailwind/react";
+import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
+import { BiArchiveIn } from "react-icons/bi";
+import { FaMagnifyingGlass } from "react-icons/fa6";
+import { setId } from "@/redux/features/tableRowIdSlice";
+import { useAppDispatch } from "@/redux/hooks";
+import EditComponent from './sections/editRule';
+
 
 interface TableProps {
     data: any[];
@@ -16,12 +20,23 @@ interface TableProps {
     perPage: number;
     actions?: boolean;
     columnID?: string;
+    
 }
 
-export const Table: React.FC<TableProps> = ({data, searchable , columns, customColumns , title, perPage,actions,columnID}) => {
+export const Table: React.FC<TableProps> = ({ data, searchable, columns, customColumns, title, perPage, actions, columnID}) => {
     const dispatch = useAppDispatch();
     const [currentPage, setCurrentPage] = useState(1);
     const [currentData, setCurrentData] = useState(data.slice(0, perPage));
+  
+    const [dialOpen, setDialOpen] = useState(true);
+  
+    const handleEditOpen = () => {
+        setDialOpen(!dialOpen);
+    }
+    useEffect(() => {
+
+
+    }, [dialOpen])
 
     const totalPages = Math.ceil(data.length / perPage);
 
@@ -44,6 +59,7 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
         setCurrentPage(1);
     }
 
+
     return (
         <Card className="h-full w-full">
             <CardBody className="overflow-auto">
@@ -54,7 +70,7 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
                                 <Input
                                     label="Search"
                                     crossOrigin={undefined}
-                                    icon={<FaMagnifyingGlass/>}
+                                    icon={<FaMagnifyingGlass />}
                                     onChange={onSearch}
                                 />
                             </div>
@@ -63,126 +79,131 @@ export const Table: React.FC<TableProps> = ({data, searchable , columns, customC
                     : null}
                 <table className="h-full w-full" key={currentPage}>
                     <thead>
-                    <tr >
-                        {customColumns ? customColumns.map((head) => (
-                            <th
-                                key={head.key}
-                                className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                            >
-                                <Typography
-                                    variant="small"
-                                    color="blue-gray"
-                                    className="font-normal leading-none opacity-70"
+                        <tr > 
+                            {columns.map((head) => (
+                                <th
+                                    key={head.key}
+                                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                                 >
-                                    {head.name}
-                                </Typography>
-                            </th>
-                        )) : null}
-                        {columns.map((head) => (
-                            <th
-                                key={head.key}
-                                className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                            >
-                                <Typography
-                                    variant="small"
-                                    color="blue-gray"
-                                    className="font-normal leading-none opacity-70"
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-normal leading-none opacity-70"
+                                    >
+                                        {head.name}
+                                    </Typography>
+                                </th>
+                            ))}
+                            {customColumns ? customColumns.map((head) => (
+                                <th
+                                    key={head.key}
+                                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                                 >
-                                    {head.name}
-                                </Typography>
-                            </th>
-                        ))}
-                        {actions ?
-                        <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                            <Typography
-                                variant="small"
-                                color="blue-gray"
-                                className="font-normal leading-none opacity-70"
-                            >
-                                Actions
-                            </Typography>
-                        </th>
-                        : null}
-                    </tr>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-normal leading-none opacity-70"
+                                    >
+                                        {head.name}
+                                    </Typography>
+                                </th>
+                            )) : null}
+                           
+                            {actions ?
+                                <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-normal leading-none opacity-70"
+                                    >
+                                        Actions
+                                    </Typography>
+                                </th>
+                                : null}
+                        </tr>
                     </thead>
                     <tbody>
-                    {currentData.map((row) => (
-                        <tr key={row[columnID??'id']} className="even:bg-blue-gray-50/50" onClick={()=>dispatch(setId(row[columnID??'id']))}>
-                            {customColumns ? customColumns.map((col) => (
-                                <td key={col.key} className="p-4">
-                                    {col.render(row)}
-                                </td>
-                            )) : null}
-                            {columns.map((col) => (
-                                <td key={col.key} className="p-4">
-                                    <Typography variant="small" color="blue-gray"
-                                                className="font-normal">{row[col.key]}</Typography>
-                                </td>
-                            ))}
-                            {actions ?
-                            <td className="p-4">
-                                <div className="flex items-center gap-3">
-                                    <Tooltip
-                                        placement="top"
-                                        color="lightBlue"
-                                        content="Edit"
-                                        size="regular"
-                                        animate={{
-                                            mount: { scale: 1, y: 0 },
-                                            unmount: { scale: 0, y: 25 },
-                                        }}
-                                    >
-                                    <button
-                                        className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
-                                        aria-label="Edit"
-                                    >
-                                        <AiOutlineEdit/>
-                                    </button>
-                                    </Tooltip>
-                                    <Tooltip
-                                        placement="top"
-                                        color="lightBlue"
-                                        content="Delete"
-                                        size="regular"
-                                        animate={{
-                                            mount: { scale: 1, y: 0 },
-                                            unmount: { scale: 0, y: 25 },
-                                        }}
-                                    >
-                                    <button
-                                        className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
-                                        aria-label="Delete"
-                                    >
-                                        <AiOutlineDelete/>
-                                    </button>
-                                    </Tooltip>
-                                    <Tooltip
-                                        placement="top"
-                                        color="lightBlue"
-                                        content="Archive"
-                                        size="regular"
-                                        animate={{
-                                            mount: { scale: 1, y: 0 },
-                                            unmount: { scale: 0, y: 25 },
-                                        }}
-                                    >
-                                    <button
-                                        className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
-                                        aria-label="Archive"
-                                    >
-                                        <BiArchiveIn/>
-                                    </button>
-                                    </Tooltip>
-                                </div>
-                            </td>
-                            : null}
-                        </tr>
-                    ))}
+                        {currentData.map((row) => (
+                            <tr key={row[columnID ?? 'id']} className="even:bg-blue-gray-50/50" onClick={() => dispatch(setId(row[columnID ?? 'id']))}>
+                                {customColumns ? customColumns.map((col) => (
+                                    <td key={col.key} className="p-4">
+                                        {col.render(row)}
+                                    </td>
+                                )) : null}
+                               
+                                {columns.map((col) => (
+                                    <td key={col.key} className="p-4">
+                                        <Typography variant="small" color="blue-gray"
+                                            className="font-normal">{row[col.key]}</Typography>
+                                    </td>
+                                ))}
+
+                                {(actions) ?
+                                    <td className="p-4">
+                                        <div className="flex items-center gap-3">
+                                            <Tooltip
+                                                placement="top"
+                                                color="lightBlue"
+                                                content="Edit"
+                                                size="regular"
+                                                animate={{
+                                                    mount: { scale: 1, y: 0 },
+                                                    unmount: { scale: 0, y: 25 },
+                                                }}
+                                            >
+                                                <button
+                                                    className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
+                                                    aria-label="Edit"
+                                                    onClick={handleEditOpen}
+                                                >
+
+                                                    <AiOutlineEdit />
+                                                </button>
+                                            </Tooltip>
+                                            <Tooltip
+                                                placement="top"
+                                                color="lightBlue"
+                                                content="Delete"
+                                                size="regular"
+                                                animate={{
+                                                    mount: { scale: 1, y: 0 },
+                                                    unmount: { scale: 0, y: 25 },
+                                                }}
+                                            >
+                                                <button
+                                                    className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
+                                                    aria-label="Delete"
+                                                >
+                                                    <AiOutlineDelete />
+                                                </button>
+                                            </Tooltip>
+                                            <Tooltip
+                                                placement="top"
+                                                color="lightBlue"
+                                                content="Archive"
+                                                size="regular"
+                                                animate={{
+                                                    mount: { scale: 1, y: 0 },
+                                                    unmount: { scale: 0, y: 25 },
+                                                }}
+                                            >
+                                                <button
+                                                    className="p-2 rounded-full bg-blue-gray-100 hover:bg-blue-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
+                                                    aria-label="Archive"
+                                                >
+                                                    <BiArchiveIn />
+                                                </button>
+                                            </Tooltip>
+                                        </div>
+                                    </td>
+                                    : null}
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </CardBody>
             <CardFooter>
-                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange}/>
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
             </CardFooter>
         </Card>
     );

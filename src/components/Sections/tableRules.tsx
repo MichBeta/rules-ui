@@ -1,21 +1,27 @@
 import TabsComponent from "@/components/tabs";
 import { Input, Textarea, Button } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
-import { metadata } from '@/data/metadata'
+import { metadata } from '@/data/metadata';
 import { useGetClaimFieldsQuery } from "@/redux/services/claimFieldApi";
-import { Operators } from "@/components/Sections/operators";
-import { RuleModalHook } from "../rulesOptions/ruleModal";
+import { Rule, useGetRuleByRuleCodeQuery } from "@/redux/services/ruleApi";
+import {RulesPallete} from "@/components/sections/rulesPallete";
+interface rulesTb {
+    editEnable?: boolean;
+    rulecode?: string;
+}
 
-
-
-export function TableRules() {
+export const TableRules: React.FC<rulesTb> = ({ editEnable, rulecode= "None" }) => {
     const { data, error, isLoading, isFetching } = useGetClaimFieldsQuery(null);
+    const rulesByCode = useGetRuleByRuleCodeQuery(rulecode === "None"? "": rulecode);
+
     const [check, setCheck] = useState(false);
     const [categories, setCategories] = useState<string[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [selectedField, setSelectedField] = useState<string>('');
     const [operator, setOperator] = useState<string>('');
-    const [midHelp, setMidHelp] = useState(false)
+    const [inputValueCode, setInputValueCode] = useState();
+    const [inputValueName, setInputValueName] = useState();
+
     const selectedCategoryFields = metadata.find(item => item.name.toLowerCase() === selectedCategory.toLowerCase())?.fields;
 
     const parser = new DOMParser();
@@ -25,94 +31,96 @@ export function TableRules() {
         return { code: item.code, name: dom };
     })
 
-    const metadataType = selectedCategoryFields?.find(item => item.name.toLowerCase() === selectedField.toLowerCase())?.type;
-    const claimFieldType = data?.filter(item => item.name.toLowerCase() === selectedField.toLowerCase())[0]?.type;
-    const claimFieldxPath = data?.filter(item => item.name.toLowerCase() === selectedField.toLowerCase())[0]?.xpath;
-    const handOpen = () => {
-        setCheck(!check)
+    const handleInputName = (event: any) => {
+        setInputValueName(event.target.value)
     }
-
-    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedCategory(e.target.value);
-        setSelectedField(''); // Reset selected field when category changes
-        setOperator(''); // Reset operator when category changes
-    };
-
-    const handleFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedField(e.target.value);
-        setOperator(''); // Reset operator when field changes
-    };
-
-    useEffect(() => {
-        setCategories(metadata.map(item => item.name));
-    }, []);
 
     const handlePredicateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setOperator(e.target.value);
     }
 
+    console.log("code" + rulesByCode.data?.name);
+    if (editEnable === false)
+    {
+        return (
+            <div className="sm: text-center p-1">
+                <TabsComponent data={[
+                    {
+                        id: 1, label: "Description", value: "description", content: <>
+                            <div className={"grid grid-cols-2 gap-6 py-0 m-0 row-1"}>
+                                <Input className={"inp-main"} label="Code" crossOrigin={undefined} type="text"
+                                    required={true} />
 
-    return (
-        <div>
-            <TabsComponent data={[
-                {
-                    id: 1, label: "Description", value: "description", content: <>
-                        <div className={"grid grid-cols-2 gap-6 "}>
-                            <Input className={"inp-main"} label="Code" crossOrigin={undefined} type="text"
-                                required={true} />
-
-                            <Input className={"inp-sec"} label="Name" crossOrigin={undefined} type="text"
-                                required={true} />
+                                <Input className={"inp-sec"} label="Name" crossOrigin={undefined} type="text"
+                                    required={true} />
+                                <br />
+                            </div>
+                            <div>
+                                <RulesPallete />
+                            </div>
                             <br />
-                        </div>
+                            <Textarea
+                                size={"lg"}
+                                label={"Description"}
+                                required={true}
+                            />
+                            <hr />
+                            <Textarea
+                                size={"lg"}
+                                label={"Violation message"}
+                                required={true}
+                            />
+                        </>
+                    },
+                    {
+                        id: 2, label: "Groups", value: "groups", content: <></>
+                    },
+                    { id: 3, label: "Summary", value: "summary", content: <></> }
+                ]} />
+            </div>
 
-                        <div className="dropdown-menu grid grid-cols-3 gap-5">
-                            <select  className="border-2 border-gray-300 rounded-md p-3  ml-2 "
-                                onChange={handleCategoryChange}>
-                                <option value={""} className="">Select Category</option>
-                                {categories.map((item, index) => (
-                                    <option key={index} value={item}>{item}</option>
-                                ))}
-                            </select>
-                            {selectedCategory && (
-                                
-                                <RuleModalHook selectedCategory={selectedCategory}/>
-                            )}
-                            {selectedField && selectedCompareOperators && (
-                                <select  onChange={handlePredicateChange}>
-                                    <option value={""}>Select Operator</option>
-                                    {selectedCompareOperators.map((item, index) => (
-                                        <option key={index} value={item.code}>{item.name}</option>
-                                    ))}
-                                </select>
-                            )}
-                        </div>
+        )
+    }else {
+        return (
+            editEnable && rulesByCode.data !== null ?
+                <div className="py-0">
+                    <TabsComponent data={[
+                        {
+                            id: 1, label: "Description", value: "description", content: <>
+                                <div className={"grid grid-cols-2 gap-6 "}>
+                                    <Input className={"inp-main"} label="Code" crossOrigin={undefined} type="text"
+                                           required={false} value={rulesByCode.data?.ruleCode}  placeholder={rulesByCode.data?.ruleCode}/>
 
-                        <div className={"m-4"}>
-                            <Operators />
-                        </div>
-
-                        <br />
-                        <Textarea
-                            size={"lg"}
-                            label={"Description"}
-                            required={true}
-                        />
-                        <hr />
-                        <Textarea
-                            size={"lg"}
-                            label={"Violation message"}
-                            required={true}
-                        />
-                    </>
-                },
-                {
-                    id: 2, label: "Groups", value: "groups", content: <></>
-                },
-                { id: 3, label: "Summary", value: "summary", content: <></> }
-            ]} />
-        </div>
-    )
+                                    <Input className={"inp-sec"} label="Name" crossOrigin={undefined} type="text"
+                                           required={false} value={inputValueName} onChange={handleInputName} placeholder={rulesByCode.data?.name}/>
+                                    <br />
+                                </div>
+                               <RulesPallete/>
+                                <br />
+                                <Textarea
+                                    size={"lg"}
+                                    label={"Description"}
+                                    value={rulesByCode.data?.description}
+                                    required={true}
+                                />
+                                <hr />
+                                <Textarea
+                                    size={"lg"}
+                                    label={"Violation message"}
+                                    value={rulesByCode.data?.violationMessage}
+                                    required={true}
+                                />
+                            </>
+                        },
+                        {
+                            id: 2, label: "Groups", value: "groups", content: <></>
+                        },
+                        { id: 3, label: "Summary", value: "summary", content: <></> }
+                    ]} />
+                </div>
+                : null
+        )
+    }
 
 }
 

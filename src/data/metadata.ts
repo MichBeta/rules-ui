@@ -12768,6 +12768,26 @@ export const metadata = [
                     {
                         name: "=",
                         code: "Equals"
+                    },
+                    {
+                        name: "Contains",
+                        code: "Like"
+                    },
+                    {
+                        name: "IsNotEmpty",
+                        code: "IsNotNull"
+                    },
+                    {
+                        name: "NotContains",
+                        code: "NotLike"
+                    },
+                    {
+                        name: "In",
+                        code: "IN"
+                    },
+                    {
+                        name: "NotIn",
+                        code: "NotIn"
                     }
                 ],
                 code: "Part",
