@@ -13892,7 +13892,7 @@ export const metadata = [
                         code: "RepairOrReplaceRDL"
                     }
                 ],
-                name: "ScoreCard Name",
+                name: "Scorediv Name",
                 compareOperators: [
                     {
                         name: "&lt;&gt;",
@@ -13923,7 +13923,7 @@ export const metadata = [
                         code: "StartsWith"
                     }
                 ],
-                code: "ScoreCardName",
+                code: "ScoredivName",
                 type: "List"
             }
         ]

@@ -1,6 +1,5 @@
 import {useGetClaimFieldsQuery} from "@/redux/services/claimFieldApi";
 import React, {useState, useEffect} from 'react';
-import {Card, List, ListItem, Chip, Input} from "@material-tailwind/react";
 import {ClaimField} from "@/models/claimField";
 import {metadata} from "@/data/metadata";
 import {MetaData, Field, CompareOperator, FieldValue} from "@/models/metadata";
@@ -74,38 +73,29 @@ export  function ClaimFields() {
                         </select>
                     )}
                     {selectedField && selectedCompareOperators && metadataType && (
-                        <Input
+                        <input
                             className="border-2 border-gray-300 rounded-md p-2"
-                            size="lg"
-                            label={"Metadata Type(Extracted from AXN)"}
                             type={"text"}
                             value={metadataType}
                             onChange={() => {}}
-                            crossOrigin={undefined}
                             readOnly={true}
                         />
                     )}
                     {selectedField && selectedCompareOperators && claimFieldType && (
-                        <Input
+                        <input
                             className="border-2 border-gray-300 rounded-md p-2"
-                            size="lg"
-                            label={"ClaimField Type(Qapter Compliance)"}
                             type={"text"}
                             value={claimFieldType}
                             onChange={() => {}}
-                            crossOrigin={undefined}
                             readOnly={true}
                         />
                     )}
                     {selectedField && selectedCompareOperators && claimFieldxPath && (
-                        <Input
+                        <input
                             className="border-2 border-gray-300 rounded-md p-2"
-                            size="lg"
-                            label={"ClaimField XPath(Qapter Compliance)"}
                             type={"text"}
                             value={claimFieldxPath}
                             onChange={() => {}}
-                            crossOrigin={undefined}
                             readOnly={true}
                         />
                     )}

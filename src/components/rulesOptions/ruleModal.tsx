@@ -1,4 +1,3 @@
-import { Dialog, DialogHeader, Typography, DialogBody, DialogFooter, Button, Input } from "@material-tailwind/react";
 import { useState } from "react"
 import { FieldsByCategorie } from "./fieldsByCategorie";
 
@@ -17,12 +16,12 @@ export function RuleModalHook({selectedCategory=""}) {
 
     return (
         <>
-        <Button color="blue" onClick={revOpen}>
-        <Typography color="white" className="-ml-3">Show Fields</Typography>
-        </Button>   
-            <Dialog open={modalOpen} handler={revOpen} className="align-middle">
+        <button color="blue" onClick={revOpen}>
+        <div color="white" className="-ml-3">Show Fields</div>
+        </button>
+            {/*<Dialog open={modalOpen} handler={revOpen} className="align-middle">
                 <DialogHeader>
-                    <Typography color="white"  className="-ml-3">Show Fields</Typography>
+                    <div color="white"  className="-ml-3">Show Fields</div>
                     <h3>Choose Field</h3>
                 </DialogHeader>
                 <DialogBody className="align-center">
@@ -39,7 +38,7 @@ export function RuleModalHook({selectedCategory=""}) {
                     </Button>
                 </DialogFooter>
 
-            </Dialog>
+            </Dialog>*/}
             </>
     );
 }

@@ -1,9 +1,3 @@
-import {
-    Card,
-    Input,
-    Chip,
-    Typography,
-} from "@material-tailwind/react";
 import {useState} from "react";
 import {useGetClaimFieldsQuery} from "@/redux/services/claimFieldApi";
 import {ClaimField} from "@/models/claimField";
@@ -22,20 +16,20 @@ export function Validator() {
         }
     }
     return (
-        <Card color="transparent" shadow={false}>
-            <Typography variant="h4" color="blue-gray">
+        <div color="transparent" >
+            <div color="blue-gray">
                 Validator
-            </Typography>
-            <Typography color="gray" className="mt-1 font-normal">
-                Enter the text to test
-            </Typography>
-            <div className="mb-4 flex flex-col gap-6">
-                <Input size="lg" label="Test text" crossOrigin={undefined} type="text" onChange={handleChange} />
             </div>
-            {match ? <Typography color="gray" className="mt-1 font-normal">
+            <div color="gray" className="mt-1 font-normal">
+                Enter the text to test
+            </div>
+            <div className="mb-4 flex flex-col gap-6">
+                <input type="text" onChange={handleChange} />
+            </div>
+            {match ? <div color="gray" className="mt-1 font-normal">
                 {match}
-            </Typography> : null}
-        </Card>
+            </div> : null}
+        </div>
     )
 }
 

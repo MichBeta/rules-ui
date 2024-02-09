@@ -1,22 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import Pagination from "@/components/pagination";
-import {
-    Card,
-    CardBody,
-    CardHeader,
-    CardFooter,
-    Tooltip,
-    Typography,
-    Input,
-    Tabs,
-    Chip,
-    TabsHeader,
-    Tab,
-    IconButton,
-    Button,
-    Select,
-    Option, Menu, MenuHandler, Checkbox,MenuList, MenuItem
-} from "@material-tailwind/react";
 import {FaMagnifyingGlass} from "react-icons/fa6";
 import { LuChevronsUpDown } from "react-icons/lu";
 import { FaFileDownload  } from "react-icons/fa";
@@ -70,6 +53,8 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
     const [srtBy, setSrtBy] = useState(sortBy);
     const [srtAscending, setSrtAscending] = useState(sortAscending);
     const [claimsPerPage, setClaimsPerPage] = useState(perPage);
+    const [activeTab, setActiveTab] = useState<string>(data[0].value);
+    const [isOpen, setIsOpen] = useState(false);
     const totalPages = Math.ceil(data.length / claimsPerPage);
 
     const onPageChange = (page: number) => {
@@ -124,6 +109,11 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
         setCurrentData(newData.slice(0, claimsPerPage));
     }
 
+    const tabChangeHandler = (tab: number) => {
+        setActiveTab(tab.toString());
+        setView(tab);
+    }
+
 
     useEffect(() => {
         if (showColumns){
@@ -148,86 +138,91 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
         }
     }, [showColumns,claimsPerPage]);
     return (
-        <Card className="h-full w-full">
-            <CardHeader floated={false} shadow={false} className="rounded-none overflow-visible">
+        <div className="h-full w-full">
+            <div className="rounded-none overflow-visible">
                 <div className="mb-8 flex items-center justify-between gap-8">
                     <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                        <Menu
-                            dismiss={{
-                                itemPress: false,
-                            }}
-                        >
-                            <MenuHandler>
-                                <Button>Columns</Button>
-                            </MenuHandler>
-                            <MenuList className="max-h-96">
-                                {columns.map((col) => ({
-                                    key: col.key,
-                                    name: col.name,
-                                    checked: true,
-                                    onChange: () => {
-                                        console.log("changed");
-                                    },
-                                })).map((col) => (
-                                    <MenuItem key={col.key} className="p-0">
-                                        <label
-                                            htmlFor="item-1"
-                                            className="flex cursor-pointer items-center gap-2 p-2"
-                                        >
-                                            <Checkbox
-                                                crossOrigin={undefined}
-                                                ripple={false}
-                                                id={col.key}
-                                                checked={currentColumns.some((val) => val.key === col.key)}
-                                                containerProps={{ className: "p-0" }}
-                                                className="hover:before:content-none"
-                                                onChange={() => {columnCheckboxHandler(col.key)}}
-                                            />
-                                            {col.name}
-                                        </label>
-                                    </MenuItem>
-                                ))
-                                }
-                            </MenuList>
-                        </Menu>
-                        <Button className="flex items-center gap-3" size="sm">
+                        <div className="relative inline-block text-left">
+                            <div>
+                                <button
+                                    type="button"
+                                    className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+                                    id="menu-button"
+                                    aria-expanded="true"
+                                    aria-haspopup="true"
+                                    onClick={()=>setIsOpen(!isOpen)}
+                                >
+                                    Columns
+                                    {/* Icono de flecha hacia abajo o algún indicador de que es un menú desplegable */}
+                                    <svg className="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div className={`${isOpen? 'block' : 'hidden'} origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50`} role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
+                                <div className="py-1" role="none">
+                                    {/* Iterar sobre cada columna */}
+                                    {columns.map((col) => (
+                                        <div key={col.key} className="text-gray-700 block px-4 py-2 text-sm" role="menuitem" id={col.key}>
+                                            <label htmlFor={`checkbox-${col.key}`} className="flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    id={`checkbox-${col.key}`}
+                                                    className="form-checkbox text-indigo-600 h-4 w-4"
+                                                    checked={currentColumns.some((val) => val.key === col.key)}
+                                                    onChange={() => { columnCheckboxHandler(col.key) }}
+                                                />
+                                                {col.name}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <button className="flex items-center gap-3">
                             <FaFileDownload strokeWidth={2} className="h-4 w-4" /> Export
-                        </Button>
+                        </button>
                     </div>
                     <div className="w-72">
-                        <Select label="Number of Rows" value={(parseInt(((perPage+9)/10).toString())*10).toString()} onChange={(e) => {
+                        <select value={(parseInt(((perPage+9)/10).toString())*10).toString()} onChange={(e) => {
                             if(e === undefined) return;
-                            setClaimsPerPage(parseInt(e));
+                            setClaimsPerPage(parseInt(e.target.value));
                         }}>
-                            <Option value={"10"}>10</Option>
-                            <Option value={"20"}>20</Option>
-                            <Option value={"30"}>30</Option>
-                            <Option value={"40"}>40</Option>
-                            <Option value={"50"}>50</Option>
-                        </Select>
+                            <option value={"10"}>10</option>
+                            <option value={"20"}>20</option>
+                            <option value={"30"}>30</option>
+                            <option value={"40"}>40</option>
+                            <option value={"50"}>50</option>
+                        </select>
                     </div>
                 </div>
                 <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-                    <Tabs value="all" className="w-full">
-                        <TabsHeader>
-                            {TABS.map(({ label, value }) => (
-                                <Tab key={value} value={value} onClick={() => setView(value)}>
-                                    &nbsp;&nbsp;{label}&nbsp;&nbsp;
-                                </Tab>
+                    <div
+                        className={"grid"}
+                    >
+                        <div >
+                            {TABS.map(tab => (
+                                <button
+                                    key={tab.value}
+                                    className={`px-4 py-2 text-sm font-semibold text-gray-600 ${activeTab === tab.value.toString() ? 'text-blue-600 border-b-2 border-blue-600' : ''}`}
+                                    onClick={() => tabChangeHandler(tab.value)}
+                                >
+                                    {tab.label}
+                                </button>
                             ))}
-                        </TabsHeader>
-                    </Tabs>
+                        </div >
+                    </div >
                     <div className="w-full md:w-72">
-                        <Input
-                            crossOrigin={undefined}
+                        <input
+                            /*crossOrigin={undefined}
                             label="Search"
-                            icon={<FaMagnifyingGlass className="h-5 w-5" />}
+                            icon={<FaMagnifyingGlass className="h-5 w-5" />}*/
                             onChange={onSearch}
                         />
                     </div>
                 </div>
-            </CardHeader>
-            <CardBody className="overflow-scroll px-0">
+            </div>
+            <div className="overflow-scroll px-0">
                 <table className="mt-4 w-full min-w-max table-auto text-left">
                     <thead>
                     <tr>
@@ -245,8 +240,7 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                                 }
                                 }
                             >
-                                <Typography
-                                    variant="small"
+                                <div
                                     color="blue-gray"
                                     className="flex items-center justify-between gap-2 font-normal leading-none opacity-70"
                                 >
@@ -254,17 +248,16 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                                     {index !== currentColumns.length && (
                                         <LuChevronsUpDown strokeWidth={2} className="h-4 w-4" />
                                     )}
-                                </Typography>
+                                </div>
                             </th>
                         ))}
                         <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                            <Typography
-                                variant="small"
+                            <div
                                 color="blue-gray"
                                 className="font-normal leading-none opacity-70"
                             >
                                 Actions
-                            </Typography>
+                            </div>
                         </th>
                     </tr>
                     </thead>
@@ -292,13 +285,12 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                                 <td key={col.key} className={classes}>
                                     <div className="flex items-center gap-3">
                                         <div className="flex flex-col">
-                                            <Typography
-                                                variant="small"
+                                            <div
                                                 color="blue-gray"
                                                 className="font-normal"
                                             >
                                                 {row[col.key]}
-                                            </Typography>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -315,12 +307,12 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                     })}
                     </tbody>
                 </table>
-            </CardBody>
-            <CardFooter>
+            </div>
+            <div>
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange}/>
-            </CardFooter>
+            </div>
             <Toaster />
-        </Card>
+        </div>
     );
 }
 

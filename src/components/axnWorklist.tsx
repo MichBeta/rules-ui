@@ -7,23 +7,6 @@ import {useGetUserConfigByUserIdQuery} from "@/redux/services/userConfigApi";
 import UserConfig from "@/models/userConfig";
 import React, {useState, useEffect} from "react";
 import {claimColumnToClaimNameMap} from "@/app/utils";
-import {
-    Checkbox, Dialog,
-    DialogBody,
-    DialogFooter,
-    DialogHeader,
-    Input,
-    Textarea,
-    Accordion,
-    AccordionHeader,
-    AccordionBody, Tooltip,
-} from "@material-tailwind/react";
-import {
-    Drawer,
-    Button,
-    Typography,
-    IconButton,
-} from "@material-tailwind/react";
 import TabsComponent from "@/components/tabs";
 import {HiChevronDown} from "react-icons/hi";
 import {Rule} from "@/redux/services/ruleApi";
@@ -33,7 +16,6 @@ import {ClaimFields} from "@/components/test/claimField";
 import {Enumerations} from "@/components/test/enumeration";
 import {Validator} from "@/components/test/validator";
 import {Parts} from "@/components/test/part";
-import {AxnClaimViewer} from "@/components/test/axnClaimViewer";
 import {ClaimRow} from "@/models/claimField";
 import {FaEye, FaFilePdf} from "react-icons/fa";
 import {toast} from "sonner";
@@ -93,12 +75,12 @@ export function AxnWorklist() {
                             target="_blank"
                             className="transition ease-in-out bg-white hover:-translate-y-1 hover:bg-[rgb(50,37,94)] hover:text-white duration-300"
                         >
-                            <Typography>
+                            <div>
                                 <span className={"font-bold"}>Estimate Type:</span> {claim.TYPE}
-                            </Typography>
-                            <Typography>
+                            </div>
+                            <div>
                                 <span className={"font-bold"}>Estimate Version:</span> {claim.VERSION}
-                            </Typography>
+                            </div>
                         </a>);
                     } else if (claim.TYPE === "Supplement") {
                         internalSupplementClaimContent.push(<a
@@ -107,12 +89,12 @@ export function AxnWorklist() {
                             target="_blank"
                             className="transition ease-in-out bg-white hover:-translate-y-1 hover:bg-[rgb(50,37,94)] hover:text-white duration-300"
                         >
-                            <Typography>
+                            <div>
                                 <span className={"font-bold"}>Estimate Type:</span> {claim.TYPE}
-                            </Typography>
-                            <Typography>
+                            </div>
+                            <div>
                                 <span className={"font-bold"}>Estimate Version:</span> {claim.VERSION}
-                            </Typography>
+                            </div>
                         </a>);
                     }
                 } else if (claim.FILENAME === "compliancecheckreport.pdf") {
@@ -123,12 +105,12 @@ export function AxnWorklist() {
                             target="_blank"
                             className="transition ease-in-out bg-white hover:-translate-y-1 hover:bg-[rgb(50,37,94)] hover:text-white duration-300"
                         >
-                            <Typography>
+                            <div>
                                 <span className={"font-bold"}>Estimate Type:</span> {claim.TYPE}
-                            </Typography>
-                            <Typography>
+                            </div>
+                            <div>
                                 <span className={"font-bold"}>Estimate Version:</span> {claim.VERSION}
-                            </Typography>
+                            </div>
                         </a>);
                     } else if (claim.TYPE === "Supplement") {
                         enterpriseSupplementClaimContent.push(<a
@@ -137,12 +119,12 @@ export function AxnWorklist() {
                             target="_blank"
                             className="transition ease-in-out bg-white hover:-translate-y-1 hover:bg-[rgb(50,37,94)] hover:text-white duration-300"
                         >
-                            <Typography>
+                            <div>
                                 <span className={"font-bold"}>Estimate Type:</span> {claim.TYPE}
-                            </Typography>
-                            <Typography>
+                            </div>
+                            <div>
                                 <span className={"font-bold"}>Estimate Version:</span> {claim.VERSION}
-                            </Typography>
+                            </div>
                         </a>);
                     }
                 } else {
@@ -152,16 +134,16 @@ export function AxnWorklist() {
                         target="_blank"
                         className="transition ease-in-out bg-white hover:-translate-y-1 hover:scale-110 hover:bg-[rgb(50,37,94)] hover:text-white duration-300"
                     >
-                        <Typography>
+                        <div>
                             <span className={"font-bold"}>Estimate Filename:</span> {claim.FILENAME}
-                        </Typography>
-                        <Typography>
+                        </div>
+                        <div>
                             <span className={"font-bold"}>Version:</span> {claim.VERSION}
-                        </Typography>
+                        </div>
                     </a>);
                 }
             });
-            setClaimData([
+            /*setClaimData([
                 {
                     id: 1,
                     label: "Internal",
@@ -224,7 +206,7 @@ export function AxnWorklist() {
                     value: "extra",
                     content: <div className="flex flex-col gap-6">{extraClaimContent}</div>
                 },
-            ]);
+            ]);*/
         }
     }, [claim.data, accordionOpen, userConfig.data?.views[view]?.columnsToShow]);
     if (isLoading) return <div>Loading...</div>
@@ -277,18 +259,14 @@ export function AxnWorklist() {
                             {
                                 key: "Actions", name: "Actions", render: (row: any) => (
                                     <>
-                                        <Tooltip content="View Claim">
-                                            <IconButton variant="text" onClick={() => toast.success("Success", {
+                                            <button onClick={() => toast.success("Success", {
                                                 description: `View Claim ${row["CLAIMNUMBER" ?? 'id']}`,
                                             })}>
                                                 <FaEye className="h-4 w-4"/>
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip content="View Claim">
-                                            <IconButton variant="text" onClick={() => setOpen(!open)}>
+                                            </button>
+                                            <button onClick={() => setOpen(!open)}>
                                                 <FaFilePdf className="h-4 w-4"/>
-                                            </IconButton>
-                                        </Tooltip></>
+                                            </button></>
                                 )
                             },
                         ]}
@@ -298,9 +276,9 @@ export function AxnWorklist() {
                 : null
             }
 
-            <Dialog open={open} handler={handleOpen} size={"xl"}>
+            {/*<Dialog open={open} handler={handleOpen} size={"xl"}>
                 <DialogHeader>
-                    <Typography color="blue-gray">{claimnumber}</Typography>
+                    <div color="blue-gray">{claimnumber}</div>
                 </DialogHeader>
                 <DialogBody>
                     <div className="mb-4 flex flex-col gap-6">
@@ -312,7 +290,7 @@ export function AxnWorklist() {
                         Close
                     </Button>
                 </DialogFooter>
-            </Dialog>
+            </Dialog>*/}
         </div>
     );
 }

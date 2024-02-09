@@ -1,7 +1,6 @@
 import { useAppSelector } from "@/redux/hooks";
 import { useGetSectionsQuery } from "@/redux/services/sectionApi";
 import { useGetPartsBySectionCodeQuery } from "@/redux/services/partApi";
-import { List, ListItem, Card, Chip, Stepper, Step, Button, Typography } from "@material-tailwind/react";
 import React, { useState, useEffect  } from 'react';
 import {GiSteeringWheel} from "react-icons/gi";
 import {TbNewSection} from "react-icons/tb";
@@ -60,77 +59,74 @@ export function Parts() {
 
     return (
         <div className="w-full px-24 py-4">
-            <Stepper
+            {/*<Stepper
                 activeStep={activeStep}
             >
                 <Step onClick={() => setActiveStep(selectedParts.length > 0?activeStep:0)}>
                     <GiSteeringWheel className="h-5 w-5" />
                     <div className="absolute -bottom-[4.5rem] w-max text-center">
-                        <Typography
-                            variant="h6"
+                        <div
                             color={activeStep === 0 ? "blue-gray" : "gray"}
                         >
                             Vehicle Type
-                        </Typography>
-                        <Typography
+                        </div>
+                        <div
                             color={activeStep === 0 ? "blue-gray" : "gray"}
                             className="font-normal"
                         >
                             Select your vehicle type.
-                        </Typography>
+                        </div>
                     </div>
                 </Step>
                 <Step onClick={() => setActiveStep(filteredSection.length>1?selectedParts.length > 0?activeStep:1:activeStep)}>
                     <TbNewSection className="h-5 w-5" />
                     <div className="absolute -bottom-[4.5rem] w-max text-center">
-                        <Typography
-                            variant="h6"
+                        <div
                             color={activeStep === 1 ? "blue-gray" : "gray"}
                         >
                             Part Section
-                        </Typography>
-                        <Typography
+                        </div>
+                        <div
                             color={activeStep === 1 ? "blue-gray" : "gray"}
                             className="font-normal"
                         >
                             Select your part section or check the part sections you want to include.
-                        </Typography>
+                        </div>
                     </div>
                 </Step>
                 <Step onClick={() => setActiveStep(parts !== undefined?selectedParts.length > 0?activeStep:2:activeStep)}>
                     <GiCarWheel className="h-5 w-5" />
                     <div className="absolute -bottom-[4.5rem] w-max text-center">
-                        <Typography
-                            variant="h6"
+                        <div
                             color={activeStep === 2 ? "blue-gray" : "gray"}
                         >
                             Part
-                        </Typography>
-                        <Typography
+                        </div>
+                        <div
                             color={activeStep === 2 ? "blue-gray" : "gray"}
                             className="font-normal"
                         >
                             Check the parts you want to include.
-                        </Typography>
+                        </div>
                     </div>
                 </Step>
-            </Stepper>
+            </Stepper>*/}
             <div className="mt-32">
                 {activeStep === 0 && (
-                    <Card className={"overflow-auto"} style={{ maxHeight: "80vh" }}>
-                        <List>
+                    <div className={"overflow-auto"} style={{ maxHeight: "80vh" }}>
+                        {/*<List>
                             <ListItem className={`font-bold`} onClick={() => sectionFilterHandler(true)}>
                                 Passenger Car & Truck
                             </ListItem>
                             <ListItem className={`font-bold`} onClick={() => sectionFilterHandler(false)}>
                                 Motorcycle
                             </ListItem>
-                        </List>
-                    </Card>
+                        </List>*/}
+                    </div>
                 )}
                 {activeStep === 1 && filteredSection ? (
-                    <Card className={"overflow-auto"} style={{ maxHeight: "80vh" }}>
-                        <List>
+                    <div className={"overflow-auto"} style={{ maxHeight: "80vh" }}>
+                        {/*<List>
                             {filteredSection?.map((item, index) => (
                                 <ListItem key={index} className={"bg-white font-bold"} >
                                     <input
@@ -139,21 +135,21 @@ export function Parts() {
                                         value={item.SectionPageCode}
                                         onChange={(e) => handleCheckboxChange(e, item.SectionPageCode)}
                                     />
-                                    <Typography className="ml-2 w-full h-full"
+                                    <div className="ml-2 w-full h-full"
                                                 onClick={() => {
                                                     toast.success("Success",{
                                                         description: `${item.SectionCode}: ${item.SectionPageCode}`,
                                                     })
                                                     partHandler(item.SectionCode)
-                                                }}>{item.DescText}</Typography>
+                                                }}>{item.DescText}</div>
                                 </ListItem>
                             ))}
-                        </List>
-                    </Card>
+                        </List>*/}
+                    </div>
                 ) : null}
                 {activeStep === 2 && Array.isArray(parts) ? (
-                    <Card className={"overflow-auto"} style={{ maxHeight: "80vh" }}>
-                        <List>
+                    <div className={"overflow-auto"} style={{ maxHeight: "80vh" }}>
+                        {/*<List>
                             {parts && [...parts].sort((a: Part, b: Part) => (a.DescText > b.DescText) ? 1 : -1).map((item, index) => (
                                 <ListItem key={index} className={"bg-white font-bold"}>
                                     <input
@@ -162,17 +158,17 @@ export function Parts() {
                                         value={item.SectionPageCode}
                                         onChange={(e) => handleCheckboxChange(e, item.SectionPageCode)}
                                     />
-                                    <Typography
+                                    <div
                                         className="ml-2 w-full h-full"
                                         onClick={() => toast.success("Success",{
                                             description: item.SectionPageCode,
                                         })
                                             }
-                                    >{item.DescText}</Typography>
+                                    >{item.DescText}</div>
                                 </ListItem>
                             ))}
-                        </List>
-                    </Card>
+                        </List>*/}
+                    </div>
                 ) : null}
             </div>
             <Toaster />
