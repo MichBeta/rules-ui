@@ -1,0 +1,23 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: node
+    tag: '18-alpine'
+
+inputs:
+  - name: source-git-qae
+outputs:
+  - name: source-git-qae
+run:
+  path: sh
+  args:
+    - -exc
+    - |
+      #!/bin/sh
+      ls -la
+      apk add --no-cache git
+      cd source-git-qae
+      version=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_qae
+      echo $version > ./ci/version.txt

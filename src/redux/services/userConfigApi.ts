@@ -22,7 +22,10 @@ export const userConfigApi = createApi({
             query: (body) => ({
                 url: '/',
                 method: 'PUT',
-                body: body,
+                body: JSON.stringify(body),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             }),
         }),
     }),

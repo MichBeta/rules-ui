@@ -25,7 +25,8 @@ import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {ClaimRow} from "@/models/claimField";
 import {claimColumnToClaimName} from "@/app/utils";
 import { Toaster, toast } from "sonner";
-import {Console} from "inspector";
+import UserConfig, {View} from "@/models/userConfig";
+import {useUpdateUserConfigByUserIdMutation} from "@/redux/services/userConfigApi";
 
 interface TableProps {
     data: any[];
@@ -33,14 +34,15 @@ interface TableProps {
     columns: any[];
     customColumns?: any[];
     showColumns?: Array<keyof ClaimRow>;
+    currentUserConfig: UserConfig;
     title: string;
     perPage: number;
     actions?: boolean;
     columnID?: string;
-    view?: number;
+    view: number;
     setView: (value: number) => void;
-    sortBy?: string;
-    sortAscending?: boolean;
+    sortBy: string;
+    sortAscending: boolean;
 }
 
 const TABS = [
@@ -62,7 +64,7 @@ const TABS = [
     },
 ];
 
-const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, customColumns , showColumns, title, perPage,actions,columnID, view, setView, sortBy, sortAscending}) => {
+const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, customColumns , showColumns, currentUserConfig, title, perPage,actions,columnID, view, setView, sortBy, sortAscending}) => {
     const dispatch = useAppDispatch();
     const [currentPage, setCurrentPage] = useState(1);
     const [currentData, setCurrentData] = useState(data.slice(0, perPage));
@@ -71,6 +73,8 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
     const [srtAscending, setSrtAscending] = useState(sortAscending);
     const [claimsPerPage, setClaimsPerPage] = useState(perPage);
     const totalPages = Math.ceil(data.length / claimsPerPage);
+
+    const [updateUserConfigByUserId] = useUpdateUserConfigByUserIdMutation();
 
     const onPageChange = (page: number) => {
         setCurrentPage(page);
@@ -112,16 +116,46 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                 const columnToAdd = columns.find((val) => val.key === columnKey);
                 newColumns = columnToAdd ? [...prevColumns, columnToAdd] : prevColumns;
             }
-            updateCurrentData(data, newColumns);
+            updateCurrentData(data, newColumns, claimsPerPage, srtBy,srtAscending);
             return newColumns;
         });
     };
 
-    const updateCurrentData = (allData: any[], newColumns: any[]) => {
+    const claimsPerPageHandler = (value: number) => {
+        setClaimsPerPage(value);
+        updateCurrentData(data, currentColumns, value, srtBy, srtAscending);
+    }
+
+    const srtAscendingAndSrtByHandler = (srtBy: string, srtAscending: boolean) => {
+        setSrtBy(srtBy);
+        setSrtAscending(srtAscending);
+        updateCurrentData(data, currentColumns, claimsPerPage, srtBy, srtAscending);
+    }
+
+    const updateCurrentData = (allData: any[], newColumns: any[], perPage: number, sortBy: string, sortAscending: boolean) => {
         let newData = allData.map(row => {
             return getSubsetOfProperties(row, newColumns.map(col => col.key));
         });
-        setCurrentData(newData.slice(0, claimsPerPage));
+
+        if (view !== undefined && currentUserConfig !== undefined &&
+            ((currentUserConfig.views[view].columnsToShow !== newColumns) ||
+                (currentUserConfig.views[view].numberOfItemsPerPage !== perPage) ||
+                (currentUserConfig.views[view].sortBy !== sortBy) ||
+                (currentUserConfig.views[view].sortAscending !== sortAscending))) {
+
+
+            let tempUserConfig = UserConfig.updateViewFromJson(currentUserConfig, new View(currentUserConfig.views[view].name, newColumns, perPage, sortBy, sortAscending));
+
+            updateUserConfigByUserId(tempUserConfig).unwrap().then((data) => {
+                console.log("updateUserConfigByUserId", data);
+            }).catch((error) => {
+                console.log("updateUserConfigByUserId error", error);
+            });
+
+            currentUserConfig = tempUserConfig;
+        }
+
+        setCurrentData(newData.slice(0, perPage));
     }
 
 
@@ -197,7 +231,7 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                     <div className="w-72">
                         <Select label="Number of Rows" value={(parseInt(((perPage+9)/10).toString())*10).toString()} onChange={(e) => {
                             if(e === undefined) return;
-                            setClaimsPerPage(parseInt(e));
+                            claimsPerPageHandler(parseInt(e));
                         }}>
                             <Option value={"10"}>10</Option>
                             <Option value={"20"}>20</Option>
@@ -237,10 +271,9 @@ const WorklistTable: React.FC<TableProps> = ({data, searchable , columns, custom
                                 className="cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50"
                                 onClick={() => {
                                     if (srtBy === head.key) {
-                                        setSrtAscending(!srtAscending);
+                                        srtAscendingAndSrtByHandler(head.key, !srtAscending);
                                     } else {
-                                        setSrtBy(head.key);
-                                        setSrtAscending(true);
+                                        srtAscendingAndSrtByHandler(head.key, true);
                                     }
                                 }
                                 }

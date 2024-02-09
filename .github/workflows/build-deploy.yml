@@ -1,0 +1,148 @@
+name: build-deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - ".github/**"
+      - "ci/**"
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - ".github/**"
+      - "ci/**"
+
+jobs:
+  build:
+    #needs: code-analysis                                        # Later we must add a 'code-analysis' job to succeed
+    runs-on: [ self-hosted, linux, x64, dotnet-6]
+    environment: DEV
+    outputs:
+      version: ${{ steps.build.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Build                                             # Build and publish to a local folder
+        id: build
+        run: |
+          echo "BUILD_VER=$(git describe --tags)" >> $GITHUB_ENV
+          echo BUILD_VER = $BUILD_VER
+          echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
+          echo version   = $(git describe --tags)
+          COMMIT_HASH=$(git rev-parse HEAD)
+          COMMIT_MESSAGE=$(git log --format=%B -n 1)
+          AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
+          AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+          echo "BUILD_VER = $BUILD_VER"
+          echo "Commit Hash = $COMMIT_HASH"
+          echo "Commit Message = $COMMIT_MESSAGE"
+          echo "Commit Authort = $AUTHOR_NAME <$AUTHOR_EMAIL>"
+          echo "Tag Name: ${{ env.GITHUB_REF }}"
+          echo "Version: ${{ needs.build.outputs.version }}"
+          echo "Docker URL: ${{ vars.DOCKER_URL }}"
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ vars.DOCKER_URL }}
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker build                                      # Build and push a docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./
+          file: ./ci/Dockerfile
+          push: true
+          tags: ${{ vars.DOCKER_URL }}/docker/rms/nvcmp/rules-newui:${{ env.BUILD_VER }}
+  ###### DEV SPACE #######
+  deploy-dev:
+    needs: build
+    runs-on: [self-hosted, linux, x64, base]
+    environment: DEV
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Checkout k8s-deploy                               # Check out 'k82-deploy' custom action repo
+        uses: actions/checkout@v3
+        with:
+          repository: Claims-NA/k8s-deploy
+          ref: "1.0"
+          path: ./.github/actions/k8s-deploy
+          token: ${{ secrets.ACTIONS_TOKEN }}
+      - name: Update version                                    # Update to the new version in k8s deployment yaml
+        run: |
+          DOCKER_TAG=${{ needs.build.outputs.version }}
+          echo tag = $DOCKER_TAG
+          sed -i "s/:VERSION/:$DOCKER_TAG/" ./ci/k8s/dev/deployment.yaml
+          cat ./ci/k8s/dev/deployment.yaml | grep "image:"
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ vars.DOCKER_URL }}
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Deploy                                            # Deploy to Tanzu k8s
+        uses: ./.github/actions/k8s-deploy
+        with:
+          api-server-uri: ${{ secrets.DEV_KUBE_API }}
+          cluster-ca: ${{ secrets.DEV_KUBE_CA }}
+          token: ${{ secrets.DEV_KUBE_TOKEN }}
+          namespace: rms-dev-nvcmp
+          file: ci/k8s/dev
+  ###### QA SPACE #######
+  deploy-qa:
+    needs: build
+    runs-on: [ self-hosted, linux, x64, base ]
+    outputs:
+      version: ${{ steps.build.outputs.version }}
+    environment: QA
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Checkout k8s-deploy                               # Check out 'k82-deploy' custom action repo
+        uses: actions/checkout@v3
+        with:
+          repository: Claims-NA/k8s-deploy
+          ref: "1.0"
+          path: ./.github/actions/k8s-deploy
+          token: ${{ secrets.ACTIONS_TOKEN }}
+      - name: Update version                                    # Update to the new version in k8s deployment yaml changue in this block
+        run: |
+          DOCKER_TAG=${{ needs.build.outputs.version }}
+          echo "Version: ${{ needs.build.outputs.version }}"
+          echo "BUILD_VER=$(git describe)" >> $GITHUB_ENV
+          echo BUILD_VER = $BUILD_VER
+          echo "version=$(git describe)" >> $GITHUB_OUTPUT
+          echo version   = $(git describe)
+          COMMIT_HASH=$(git rev-parse HEAD)
+          COMMIT_MESSAGE=$(git log --format=%B -n 1)
+          AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
+          AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+          echo "BUILD_VER = $BUILD_VER"
+          echo "Commit Hash = $COMMIT_HASH"
+          echo "Commit Message = $COMMIT_MESSAGE"
+          echo "Commit Author = $AUTHOR_NAME <$AUTHOR_EMAIL>"
+          echo "Version: ${{ needs.build.outputs.version }}"
+          echo tag = $DOCKER_TAG
+          sed -i "s/:VERSION/:$DOCKER_TAG/" ./ci/k8s/qae/deployment.yaml
+          cat ./ci/k8s/qae/deployment.yaml | grep "image:"
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ vars.DOCKER_URL }}
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Deploy                                            # Deploy to Tanzu k8s
+        uses: ./.github/actions/k8s-deploy
+        with:
+          api-server-uri: ${{ secrets.QAE_KUBE_API }}
+          cluster-ca: ${{ secrets.QAE_KUBE_CA }}
+          token: ${{ secrets.QAE_KUBE_TOKEN }}
+          namespace: rms-qae-nvcmp
+          file: ci/k8s/qae

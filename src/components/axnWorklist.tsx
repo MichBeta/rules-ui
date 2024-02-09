@@ -33,7 +33,6 @@ import {ClaimFields} from "@/components/test/claimField";
 import {Enumerations} from "@/components/test/enumeration";
 import {Validator} from "@/components/test/validator";
 import {Parts} from "@/components/test/part";
-import {AxnClaimViewer} from "@/components/test/axnClaimViewer";
 import {ClaimRow} from "@/models/claimField";
 import {FaEye, FaFilePdf} from "react-icons/fa";
 import {toast} from "sonner";
@@ -53,6 +52,7 @@ const CUSTOM_ANIMATION = {
 export function AxnWorklist() {
     const owner = Cookies.get("credentials")?.split("|")[2] || "";
     const user = Cookies.get("credentials")?.split("|")[1] || "";
+    //const [getUserConfigByUserId, { isLoadingUserConfig, isErrorUserConfig, errorUserConfig }] = useGetUserConfigByUserIdQuery(user);
     const claimnumber = useAppSelector(state => state.tableRowReducer.id);
     const userConfig = useGetUserConfigByUserIdQuery(user);
     console.log("User Config:", userConfig);
@@ -292,6 +292,7 @@ export function AxnWorklist() {
                             },
                         ]}
                         showColumns={userConfig.data?.views[view]?.columnsToShow ? userConfig.data?.views[view]?.columnsToShow as (keyof ClaimRow)[] : []}
+                        currentUserConfig={userConfig?.data as UserConfig}
                     />
                 : null
             }
