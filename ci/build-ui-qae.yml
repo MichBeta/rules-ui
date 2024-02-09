@@ -9,7 +9,7 @@ image_resource:
 inputs:
   - name: source-git-qae
 outputs:
-  - name: source-git
+  - name: source-git-qae
 run:
   path: sh
   args:
@@ -18,6 +18,6 @@ run:
       #!/bin/sh
       ls -la
       apk add --no-cache git
-      cd source-git
+      cd source-git-qae
       version=$(git describe --long | awk -F- '{printf "V%s-%04d-%s", $1, $2, $3}')_qae
       echo $version > ./ci/version.txt
