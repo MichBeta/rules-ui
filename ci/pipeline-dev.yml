@@ -23,7 +23,7 @@ jobs:
         task: build-rules-newui
       - put: docker-nvcmp-rules-newui
         params:
-          build: ./
+          build: ./source-git
           dockerfile: source-git/ci/Dockerfile
           tag_as_latest: true
           tag_file: source-git/ci/version.txt
@@ -42,7 +42,7 @@ jobs:
         task: build-rules-newui
       - put: docker-nvcmp-rules-newui
         params:
-          build: ./
+          build: ./source-git-qae
           dockerfile: source-git-qae/ci/Dockerfile
           tag_as_latest: true
           tag_file: source-git-qae/ci/version.txt

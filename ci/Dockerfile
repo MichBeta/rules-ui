@@ -7,7 +7,7 @@ RUN node -v
 WORKDIR /app
 
 # Copy source
-COPY ./source-git /app
+COPY ./ /app
 
 # List the contents of the app directory again to debug
 RUN ls -la /app
