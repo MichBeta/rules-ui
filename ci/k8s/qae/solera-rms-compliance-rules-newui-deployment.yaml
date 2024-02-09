@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    service: solera-rms-compliance-rules-newui
+  name: solera-rms-compliance-rules-newui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      service: solera-rms-compliance-rules-newui
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        network/default: "true"
+        service: solera-rms-compliance-rules-newui
+        solera-vertical: rms
+        solera-env: qa
+        solera-org: cmp
+        solera-ingress: enabled
+    spec:
+      containers:
+        - env:
+            - name: APPLICATION_SERVICES
+              value: https://applicationservices-qae.tkg-rms-qae.usdc01.solera.farm/
+            - name: REACT_ENVIRONMENT
+              value: QA
+            - name: AUTH_SERVER
+              value: https://dispatch-login-qa.tkg-rms-qae.usdc01.solera.farm/
+            - name: LOGIN_SERVICES
+              value: https://adxe_qa.tkg-rms-qa.usdc01.solera.farm/
+            - name: RULES_SERVICE_URL
+              value: "rules-service.tkg-rms-qae.usdc01.solera.farm"
+            - name: OPTIMIZE_MEMORY
+              value: "true"
+            - name: SPRING_PROFILES_ACTIVE
+              value: QA
+            - name: VS
+              value: test
+            - name: CORECLR_NEWRELIC_HOME
+              value: /app/newrelic/newrelic-netcore20-agent
+            - name: CORECLR_PROFILER_PATH
+              value: /app/newrelic/newrelic-netcore20-agent/libNewRelicProfiler.so
+            - name: NODE_ENV
+              value: QA
+          image: feeds.axadmin.net/docker/rms/nvcmp/rules-newui:VERSION
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 180
+          name: solera-rms-compliance-rules-newui
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: 100M
+              cpu: 3m
+            limits:
+              memory: 125M
+              cpu: 260m
+      restartPolicy: Always
+      serviceAccountName: default
+status: {}
