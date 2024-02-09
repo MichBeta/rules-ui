@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import Pagination from "@/components/pagination";
-import {Tooltip, Input} from "@material-tailwind/react";
 import {AiOutlineEdit, AiOutlineDelete} from "react-icons/ai";
 import {BiArchiveIn} from "react-icons/bi";
 import {FaMagnifyingGlass} from "react-icons/fa6";
